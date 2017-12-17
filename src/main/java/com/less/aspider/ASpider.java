@@ -2,14 +2,18 @@ package com.less.aspider;
 
 import com.less.aspider.bean.Request;
 import com.less.aspider.downloader.Downloader;
+import com.less.aspider.downloader.OkHttpDownloader;
+import com.less.aspider.pipeline.ConsolePipeline;
 import com.less.aspider.pipeline.Pipeline;
 import com.less.aspider.processor.PageProcessor;
+import com.less.aspider.scheduler.QueueScheduler;
 import com.less.aspider.scheduler.Scheduler;
-import com.less.aspider.scheduler.impl.QueueScheduler;
 import com.less.aspider.util.CountableThreadPool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
@@ -49,6 +53,8 @@ public class ASpider implements Runnable {
 
     private final AtomicLong pageCount = new AtomicLong(0);
 
+    private ExecutorService executorService;
+
     public static ASpider create() {
         ASpider aSpider = new ASpider();
         return aSpider;
@@ -74,6 +80,11 @@ public class ASpider implements Runnable {
         return this;
     }
 
+    public ASpider executorService(ExecutorService executorService){
+        this.executorService = executorService;
+        return this;
+    }
+
     public ASpider urls(String... urls) {
         for (String url : urls) {
             addRequest(new Request(url));
@@ -85,6 +96,21 @@ public class ASpider implements Runnable {
     private void addRequest(Request request) {
         System.out.println("fucking");
         scheduler.push(request);
+    }
+
+    private void waitNewUrl() {
+        newUrlLock.lock();
+        try {
+            //double check
+            if (threadPool.getThreadAlive() == 0 && exitWhenComplete) {
+                return;
+            }
+            newUrlCondition.await(30000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            System.err.println("waitNewUrl - interrupted, error {}" + e.toString());
+        } finally {
+            newUrlLock.unlock();
+        }
     }
 
     private void signalNewUrl() {
@@ -99,12 +125,54 @@ public class ASpider implements Runnable {
     @Override
     public void run() {
         checkRunningStat();
+        initComponent();
         while (!Thread.currentThread().isInterrupted() && stat.get() == STAT_RUNNING) {
-            System.out.println("=========>");
-            if (threadPool.getThreadAlive() == 0 && exitWhenComplete) {
-                break;
+            final Request request = scheduler.poll();
+            if (request == null) {
+                if (threadPool.getThreadAlive() == 0 && exitWhenComplete) {
+                    break;
+                }
+                waitNewUrl();
+            } else {
+                threadPool.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            processRequest(request);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            pageCount.incrementAndGet();
+                            signalNewUrl();
+                        }
+                    }
+                });
             }
-            System.out.println("end");
+        }
+    }
+
+    private void processRequest(Request request) {
+        Page page = downloader.download(request, this);
+        if (page.isDownloadSuccess()){
+            onDownloadSuccess(request, page);
+        } else {
+            onDownloaderFail(request);
+        }
+    }
+
+    private void initComponent() {
+        if (downloader == null) {
+            this.downloader = new OkHttpDownloader();
+        }
+        if (pipelines.isEmpty()) {
+            pipelines.add(new ConsolePipeline());
+        }
+        if (threadPool == null || threadPool.isShutdown()) {
+            if (executorService != null && !executorService.isShutdown()) {
+                threadPool = new CountableThreadPool(threadNum, executorService);
+            } else {
+                threadPool = new CountableThreadPool(threadNum);
+            }
         }
     }
 

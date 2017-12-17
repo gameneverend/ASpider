@@ -1,7 +1,6 @@
-package com.less.aspider.scheduler.impl;
+package com.less.aspider.scheduler;
 
 import com.less.aspider.bean.Request;
-import com.less.aspider.scheduler.Scheduler;
 
 /**
  * Created by deeper on 2017/12/17.
