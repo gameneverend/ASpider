@@ -11,7 +11,7 @@ import com.less.aspider.scheduler.QueueScheduler;
 import com.less.aspider.scheduler.Scheduler;
 import com.less.aspider.util.CloseUtils;
 import com.less.aspider.util.CountableThreadPool;
-import com.less.aspider.util.SerializationUtils;
+import com.less.aspider.util.SerializationUtil;
 import com.less.aspider.util.ThreadUtils;
 
 import java.util.ArrayList;
@@ -164,14 +164,23 @@ public class ASpider implements Runnable {
     private void processRequest(Request request) {
         Page page = downloader.download(request);
         if (page.isDownloadSuccess()){
-            onDownloadSuccess(request, page);
+            onDownloadSuccess(page);
         } else {
             onDownloaderFail(request);
         }
     }
 
-    private void onDownloadSuccess(Request request, Page page) {
+    private void onDownloadSuccess(Page page) {
         pageProcessor.process(page);
+        for (Request request : page.getTargetRequests()) {
+            addRequest(request);
+        }
+        if (!page.isSkip()) {
+            for (Pipeline pipeline : pipelines) {
+                pipeline.process(page.getFields());
+            }
+        }
+        ThreadUtils.sleep(3000);
     }
 
     private void onDownloaderFail(Request request) {
@@ -181,12 +190,12 @@ public class ASpider implements Runnable {
             Object cycleTriedTimesObject = request.getExtra(Request.CYCLE_TRIED_TIMES);
             // 首次重试请求
             if (cycleTriedTimesObject == null) {
-                addRequest(SerializationUtils.clone(request).setPriority(0).putExtra(Request.CYCLE_TRIED_TIMES, 1));
+                addRequest(SerializationUtil.clone(request).setPriority(0).putExtra(Request.CYCLE_TRIED_TIMES, 1));
             } else {
                 int cycleTriedTimes = (Integer) cycleTriedTimesObject;
                 cycleTriedTimes++;
                 if (cycleTriedTimes < errorRetryTimes) {
-                    addRequest(SerializationUtils.clone(request).setPriority(0).putExtra(Request.CYCLE_TRIED_TIMES, cycleTriedTimes));
+                    addRequest(SerializationUtil.clone(request).setPriority(0).putExtra(Request.CYCLE_TRIED_TIMES, cycleTriedTimes));
                 }
             }
         }
@@ -200,7 +209,7 @@ public class ASpider implements Runnable {
             pipelines.add(new ConsolePipeline());
         }
         if (threadPool == null || threadPool.isShutdown()) {
-            if (executorService != null && !executorService.isShutdown()) {
+            if (executorService != null) {
                 threadPool = new CountableThreadPool(threadNum, executorService);
             } else {
                 threadPool = new CountableThreadPool(threadNum);

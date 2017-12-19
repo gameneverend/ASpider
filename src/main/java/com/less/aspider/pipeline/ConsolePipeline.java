@@ -1,9 +1,19 @@
 package com.less.aspider.pipeline;
 
+import java.util.Map;
+
 /**
- * Created by deeper on 2017/12/17.
+ *
+ * @author deeper
+ * @date 2017/12/17
  */
 
 public class ConsolePipeline implements Pipeline {
 
+    @Override
+    public void process(Map<String, Object> fields) {
+        for (Map.Entry<String, Object> entry : fields.entrySet()) {
+            System.out.println(entry.getKey() + ":\t" + entry.getValue());
+        }
+    }
 }

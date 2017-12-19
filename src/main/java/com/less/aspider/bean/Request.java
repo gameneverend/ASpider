@@ -50,4 +50,8 @@ public class Request implements Serializable {
         this.priority = priority;
         return this;
     }
+
+    public String getUrl(){
+        return url;
+    }
 }
