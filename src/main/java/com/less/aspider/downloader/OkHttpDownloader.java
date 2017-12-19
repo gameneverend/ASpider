@@ -2,6 +2,7 @@ package com.less.aspider.downloader;
 
 import com.less.aspider.bean.Page;
 import com.less.aspider.bean.Request;
+import com.less.aspider.proxy.ProxyProvider;
 import com.less.aspider.util.Singleton;
 
 import java.io.IOException;
@@ -11,12 +12,13 @@ import okhttp3.Response;
 
 
 /**
- *
  * @author deeper
  * @date 2017/12/17
  */
 
 public class OkHttpDownloader implements Downloader {
+
+    private ProxyProvider proxyProvider;
 
     static public OkHttpClient getDefault() {
         return gDefault.get();
@@ -30,6 +32,11 @@ public class OkHttpDownloader implements Downloader {
             return okHttpClient;
         }
     };
+
+    @Override
+    public void setProxyProvider(ProxyProvider proxyProvider){
+        this.proxyProvider = proxyProvider;
+    }
 
     @Override
     public Page download(Request request) {

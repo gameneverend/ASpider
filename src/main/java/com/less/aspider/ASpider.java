@@ -101,7 +101,6 @@ public class ASpider implements Runnable {
     }
 
     private void addRequest(Request request) {
-        System.out.println("fucking");
         scheduler.push(request);
     }
 
