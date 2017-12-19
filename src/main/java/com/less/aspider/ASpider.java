@@ -1,5 +1,6 @@
 package com.less.aspider;
 
+import com.less.aspider.bean.Page;
 import com.less.aspider.bean.Request;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.OkHttpDownloader;
@@ -8,7 +9,10 @@ import com.less.aspider.pipeline.Pipeline;
 import com.less.aspider.processor.PageProcessor;
 import com.less.aspider.scheduler.QueueScheduler;
 import com.less.aspider.scheduler.Scheduler;
+import com.less.aspider.util.CloseUtils;
 import com.less.aspider.util.CountableThreadPool;
+import com.less.aspider.util.SerializationUtils;
+import com.less.aspider.util.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +28,9 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 
 public class ASpider implements Runnable {
+
+    /** 失败重试次数 */
+    private int errorRetryTimes = 2;
 
     private Downloader downloader;
 
@@ -148,15 +155,40 @@ public class ASpider implements Runnable {
                     }
                 });
             }
+            stat.set(STAT_STOPPED);
+            // release some resources
+            CloseUtils.closeQuietly(scheduler);
         }
     }
 
     private void processRequest(Request request) {
-        Page page = downloader.download(request, this);
+        Page page = downloader.download(request);
         if (page.isDownloadSuccess()){
             onDownloadSuccess(request, page);
         } else {
             onDownloaderFail(request);
+        }
+    }
+
+    private void onDownloadSuccess(Request request, Page page) {
+        pageProcessor.process(page);
+    }
+
+    private void onDownloaderFail(Request request) {
+        if (errorRetryTimes == 0) {
+            ThreadUtils.sleep(3000);
+        } else {
+            Object cycleTriedTimesObject = request.getExtra(Request.CYCLE_TRIED_TIMES);
+            // 首次重试请求
+            if (cycleTriedTimesObject == null) {
+                addRequest(SerializationUtils.clone(request).setPriority(0).putExtra(Request.CYCLE_TRIED_TIMES, 1));
+            } else {
+                int cycleTriedTimes = (Integer) cycleTriedTimesObject;
+                cycleTriedTimes++;
+                if (cycleTriedTimes < errorRetryTimes) {
+                    addRequest(SerializationUtils.clone(request).setPriority(0).putExtra(Request.CYCLE_TRIED_TIMES, cycleTriedTimes));
+                }
+            }
         }
     }
 
