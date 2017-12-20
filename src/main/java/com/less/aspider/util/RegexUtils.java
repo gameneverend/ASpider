@@ -1,7 +1,9 @@
 package com.less.aspider.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -12,10 +14,16 @@ import java.util.regex.PatternSyntaxException;
 
 public class RegexUtils {
 
+    private static Map<String,RegexUtils> cache = new HashMap<>();
     private Pattern regex;
 
-    public static RegexUtils create(String expr) {
-        return new RegexUtils(expr);
+    public static RegexUtils get(String expr) {
+        RegexUtils instance = cache.get(expr);
+        if (null == instance) {
+            instance = new RegexUtils(expr);
+            cache.put(expr, instance);
+        }
+        return instance;
     }
 
     public RegexUtils(String regexStr){

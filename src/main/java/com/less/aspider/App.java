@@ -28,23 +28,23 @@ public class App {
                     @Override
                     public void process(Page page) {
                         String url = page.getUrl();
-                        boolean flag = RegexUtils.create(userRegex).matchers(url);
+                        boolean flag = RegexUtils.get(userRegex).matchers(url);
                         if (flag) {
                             // 个人主页
                             // 选择该【个人主页】的关注列表页面
-                            String followUrl = RegexUtils.create(followRegex).selectSingle(page.getRawText(),0);
+                            String followUrl = RegexUtils.get(followRegex).selectSingle(page.getRawText(),0);
                             followUrl = BASE_URL + followUrl;
                             page.addTargetRequests(followUrl);
-                            String fansCount = RegexUtils.create(fansRegex).selectSingle(page.getRawText(),1);
+                            String fansCount = RegexUtils.get(fansRegex).selectSingle(page.getRawText(),1);
                             int fans = Integer.parseInt(fansCount);
-                            if (fans > 100) {
+                            if (fans > 10) {
                                 page.putField("user",url);
                                 page.putField("fansCount",fansCount);
                             }
                         } else {
                             // 关注列表页面
                             // 选择该【列表页面】的用户个人主页
-                            List<String> list = RegexUtils.create(chooseRegex).selectList(page.getRawText(),1);
+                            List<String> list = RegexUtils.get(chooseRegex).selectList(page.getRawText(),1);
                             for (String userUrl : list) {
                                 userUrl = BASE_URL + "/u/" + userUrl;
                                 page.addTargetRequests(userUrl);
@@ -52,7 +52,7 @@ public class App {
                         }
                     }
                 })
-                .thread(2)
+                .thread(5)
                 .urls("http://www.jianshu.com/u/79a88a044955")
                 .run();
     }
