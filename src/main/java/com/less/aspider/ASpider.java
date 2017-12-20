@@ -30,7 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ASpider implements Runnable {
 
     /** 失败重试次数 */
-    private int errorRetryTimes = 2;
+    private int errorRetryTimes = 3;
 
     private Downloader downloader;
 
@@ -154,10 +154,10 @@ public class ASpider implements Runnable {
                     }
                 });
             }
-            stat.set(STAT_STOPPED);
-            // release some resources
-            CloseUtils.closeQuietly(scheduler);
         }
+        stat.set(STAT_STOPPED);
+        // release some resources
+        CloseUtils.closeQuietly(scheduler);
     }
 
     private void processRequest(Request request) {
