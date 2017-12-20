@@ -2,23 +2,21 @@ package com.less.aspider;
 
 import com.less.aspider.bean.Page;
 import com.less.aspider.processor.PageProcessor;
+import com.less.aspider.util.RegexUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Administrator
  */
 public class App {
-
+    public static final String BASE_URL = "http://www.jianshu.com";
     public static void main(String args[]) {
-        final String categoryRegex = "https://www.meitulu.com/t/[a-zA-Z]*/";
-        String detailRegex = "https://mtl.ttsqgs.com/images/img/.*.jpg";
+        final String userRegex = "http://www\\.jianshu\\.com/u/[a-zA-Z0-9]*";
+        final String followRegex = "/users/.*/following";
+        final String chooseRegex = "<a class=\"avatar\" href=\"/u/(.*)\">";
+        final String fansRegex = "<p>(\\d+)</p>[\\s|\n]*粉丝";
 
-        final Pattern patternCategory = Pattern.compile(categoryRegex);
-        final Pattern patternDetail = Pattern.compile(detailRegex);
         /*
          * Proxy 代理设置
          * ProxyProvider proxyProvider = SimpleProxyProvider.from();
@@ -29,27 +27,33 @@ public class App {
                 .pageProcessor(new PageProcessor() {
                     @Override
                     public void process(Page page) {
-                        String html = page.getRawText();
-                        Matcher matcherCategory = patternCategory.matcher(html);
-                        List<String> urls = new ArrayList<String>();
-                        while (matcherCategory.find()) {
-                            String group = matcherCategory.group();
-                            urls.add(group);
-                        }
-                        System.out.println(urls);
-                        page.addTargetRequests(urls);
-
-                        Matcher matcherDetail = patternDetail.matcher(html);
-                        int i = 0;
-                        while (matcherDetail.find()) {
-                            String group = matcherDetail.group();
-                            page.putField("name" + i, group);
-                            i++;
+                        String url = page.getUrl();
+                        boolean flag = RegexUtils.create(userRegex).matchers(url);
+                        if (flag) {
+                            // 个人主页
+                            // 选择该【个人主页】的关注列表页面
+                            String followUrl = RegexUtils.create(followRegex).selectSingle(page.getRawText(),0);
+                            followUrl = BASE_URL + followUrl;
+                            page.addTargetRequests(followUrl);
+                            String fansCount = RegexUtils.create(fansRegex).selectSingle(page.getRawText(),1);
+                            int fans = Integer.parseInt(fansCount);
+                            if (fans > 100) {
+                                page.putField("user",url);
+                                page.putField("fansCount",fansCount);
+                            }
+                        } else {
+                            // 关注列表页面
+                            // 选择该【列表页面】的用户个人主页
+                            List<String> list = RegexUtils.create(chooseRegex).selectList(page.getRawText(),1);
+                            for (String userUrl : list) {
+                                userUrl = BASE_URL + "/u/" + userUrl;
+                                page.addTargetRequests(userUrl);
+                            }
                         }
                     }
                 })
-                .thread(5)
-                .urls("https://www.meitulu.com/")
+                .thread(2)
+                .urls("http://www.jianshu.com/u/79a88a044955")
                 .run();
     }
 }

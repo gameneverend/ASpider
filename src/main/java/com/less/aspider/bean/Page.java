@@ -11,6 +11,8 @@ import java.util.Map;
 
 public class Page {
 
+    private String url;
+
     private boolean skip;
 
     private Map<String, Object> fields = new LinkedHashMap<String, Object>();
@@ -20,6 +22,14 @@ public class Page {
     private List<Request> targetRequests = new ArrayList<Request>();
 
     private String rawText;
+
+    public void setUrl(String url){
+        this.url = url;
+    }
+
+    public String getUrl(){
+        return url;
+    }
 
     public void setDownloadSuccess(boolean downloadSuccess) {
         this.downloadSuccess = downloadSuccess;
@@ -42,6 +52,12 @@ public class Page {
     }
 
     public void addTargetRequests(List<String> urls) {
+        for (String url : urls) {
+            targetRequests.add(new Request(url));
+        }
+    }
+
+    public void addTargetRequests(String ...urls) {
         for (String url : urls) {
             targetRequests.add(new Request(url));
         }
