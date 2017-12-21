@@ -46,7 +46,6 @@ public class SimpleProxyProvider implements ProxyProvider {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(proxies);
         return new SimpleProxyProvider(proxies);
     }
 

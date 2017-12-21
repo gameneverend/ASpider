@@ -179,12 +179,12 @@ public class ASpider implements Runnable {
                 pipeline.process(page.getFields());
             }
         }
-        ThreadUtils.sleep(5000);
+        ThreadUtils.sleep(3000);
     }
 
     private void onDownloaderFail(Request request) {
         if (errorRetryTimes == 0) {
-            ThreadUtils.sleep(5000);
+            ThreadUtils.sleep(3000);
         } else {
             Object cycleTriedTimesObject = request.getExtra(Request.CYCLE_TRIED_TIMES);
             // 首次重试请求

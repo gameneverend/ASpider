@@ -9,6 +9,7 @@ import com.less.aspider.proxy.ProxyProvider;
  */
 
 public interface Downloader {
+
     Page download(Request request);
 
     void setProxyProvider(ProxyProvider proxyProvider);

@@ -2,7 +2,7 @@ package com.less.aspider;
 
 import com.less.aspider.bean.Page;
 import com.less.aspider.downloader.Downloader;
-import com.less.aspider.downloader.OkHttpDownloader;
+import com.less.aspider.downloader.HttpConnDownloader;
 import com.less.aspider.processor.PageProcessor;
 import com.less.aspider.proxy.ProxyProvider;
 import com.less.aspider.proxy.SimpleProxyProvider;
@@ -25,7 +25,7 @@ public class App {
          // Proxy 代理设置
         String path = System.getProperty("user.dir") + File.separator + "ASpidder" + File.separator + "src/main/java/proxy.txt";
         ProxyProvider proxyProvider = SimpleProxyProvider.from(path);
-        Downloader downloader = new OkHttpDownloader();
+        Downloader downloader = new HttpConnDownloader();
         downloader.setProxyProvider(proxyProvider);
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
