@@ -5,6 +5,7 @@ package com.less.aspider.bean;
  */
 
 public class Proxy {
+    private int errorTimes = 0;
     private String host;
     private int port;
     private String username;
@@ -20,6 +21,14 @@ public class Proxy {
         this.port = port;
         this.username = username;
         this.password = password;
+    }
+
+    public void setErrorTimes(int times){
+        this.errorTimes = times;
+    }
+
+    public int getErrorTimes(){
+        return errorTimes;
     }
 
     public String getHost() {

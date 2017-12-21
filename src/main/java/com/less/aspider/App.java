@@ -1,9 +1,14 @@
 package com.less.aspider;
 
 import com.less.aspider.bean.Page;
+import com.less.aspider.downloader.Downloader;
+import com.less.aspider.downloader.OkHttpDownloader;
 import com.less.aspider.processor.PageProcessor;
+import com.less.aspider.proxy.ProxyProvider;
+import com.less.aspider.proxy.SimpleProxyProvider;
 import com.less.aspider.util.RegexUtils;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -17,12 +22,11 @@ public class App {
         final String chooseRegex = "<a class=\"avatar\" href=\"/u/(.*)\">";
         final String fansRegex = "<p>(\\d+)</p>[\\s|\n]*粉丝";
 
-        /*
-         * Proxy 代理设置
-         * ProxyProvider proxyProvider = SimpleProxyProvider.from();
-         * Downloader downloader = new OkHttpDownloader();
-         * downloader.setProxyProvider(proxyProvider);
-         */
+         // Proxy 代理设置
+        String path = System.getProperty("user.dir") + File.separator + "ASpidder" + File.separator + "src/main/java/proxy.txt";
+        ProxyProvider proxyProvider = SimpleProxyProvider.from(path);
+        Downloader downloader = new OkHttpDownloader();
+        downloader.setProxyProvider(proxyProvider);
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
                     @Override
@@ -37,7 +41,7 @@ public class App {
                             page.addTargetRequests(followUrl);
                             String fansCount = RegexUtils.get(fansRegex).selectSingle(page.getRawText(),1);
                             int fans = Integer.parseInt(fansCount);
-                            if (fans > 10) {
+                            if (fans > -1) {
                                 page.putField("user",url);
                                 page.putField("fansCount",fansCount);
                             }
@@ -52,7 +56,8 @@ public class App {
                         }
                     }
                 })
-                .thread(5)
+                .thread(10)
+                .downloader(downloader)
                 .urls("http://www.jianshu.com/u/79a88a044955")
                 .run();
     }

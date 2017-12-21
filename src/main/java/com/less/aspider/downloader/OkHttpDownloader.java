@@ -6,7 +6,10 @@ import com.less.aspider.proxy.ProxyProvider;
 import com.less.aspider.util.Singleton;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
@@ -20,7 +23,7 @@ public class OkHttpDownloader implements Downloader {
 
     private ProxyProvider proxyProvider;
 
-    static public OkHttpClient getDefault() {
+    static public OkHttpClient getOkhttpDefault() {
         return gDefault.get();
     }
 
@@ -44,8 +47,22 @@ public class OkHttpDownloader implements Downloader {
                 .url(request.getUrl())
                 .get();
         Page page = new Page();
+        Call call = null;
+        com.less.aspider.bean.Proxy proxyBean = null;
+        if (proxyProvider != null && (proxyBean = proxyProvider.getProxy()) != null) {
+            System.out.println("======> Request Proxy: " + proxyBean.getHost() + " : " + proxyBean.getPort());
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyBean.getHost(), proxyBean.getPort()));
+            call = getOkhttpDefault().newBuilder()
+                    .proxy(proxy)
+                    .build()
+                    .newCall(builder.build());
+        } else {
+            System.out.println("=====> Request Nomal <=====");
+            call = getOkhttpDefault().newCall(builder.build());
+        }
+
         try {
-            Response response = getDefault().newCall(builder.build()).execute();
+            Response response = call.execute();
             page.setUrl(request.getUrl());
             page.setRawText(response.body().string());
             page.setDownloadSuccess(true);
@@ -53,6 +70,10 @@ public class OkHttpDownloader implements Downloader {
         } catch (IOException e) {
             page.setDownloadSuccess(false);
             e.printStackTrace();
+        } finally {
+            if (proxyProvider != null && proxyBean != null) {
+                proxyProvider.returnProxy(proxyBean,page);
+            }
         }
         return page;
     }
