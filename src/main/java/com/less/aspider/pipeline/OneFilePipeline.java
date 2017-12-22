@@ -1,15 +1,16 @@
 package com.less.aspider.pipeline;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import static org.apache.commons.io.FileUtils.getFile;
-
 /**
  * 单文件pipeline(synchronized)
- * Created by deeper on 2017/12/21.
+ *
+ * @author deeper
+ * @date 2017/12/21
  */
 
 public class OneFilePipeline implements Pipeline {
@@ -17,7 +18,7 @@ public class OneFilePipeline implements Pipeline {
 
     public OneFilePipeline(String path){
         try {
-            printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(getFile(path)), "UTF-8"));
+            printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path)), "UTF-8"));
         } catch (Exception e) {
             e.printStackTrace();
         }

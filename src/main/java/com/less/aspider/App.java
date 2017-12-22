@@ -3,9 +3,11 @@ package com.less.aspider;
 import com.less.aspider.bean.Page;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
+import com.less.aspider.pipeline.OneFilePipeline;
 import com.less.aspider.processor.PageProcessor;
 import com.less.aspider.proxy.ProxyProvider;
 import com.less.aspider.proxy.SimpleProxyProvider;
+import com.less.aspider.scheduler.BDBScheduler;
 import com.less.aspider.util.RegexUtils;
 
 import java.io.File;
@@ -15,9 +17,9 @@ import java.util.List;
  * @author Administrator
  */
 public class App {
-    public static final String BASE_URL = "http://www.jianshu.com";
+    public static final String BASE_URL = "https://www.jianshu.com";
     public static void main(String args[]) {
-        final String userRegex = "http://www\\.jianshu\\.com/u/[a-zA-Z0-9]*";
+        final String userRegex = "https://www\\.jianshu\\.com/u/[a-zA-Z0-9]*";
         final String followRegex = "/users/.*/following";
         final String chooseRegex = "<a class=\"avatar\" href=\"/u/(.*)\">";
         final String fansRegex = "<p>(\\d+)</p>[\\s|\n]*粉丝";
@@ -58,7 +60,9 @@ public class App {
                 })
                 .thread(10)
                 .downloader(downloader)
-                .urls("http://www.jianshu.com/u/79a88a044955")
+                .scheduler(new BDBScheduler())
+                .addPipeline(new OneFilePipeline("F:/JianShuURL.txt"))
+                .urls("https://www.jianshu.com/u/2900feeb8251")
                 .run();
     }
 }
