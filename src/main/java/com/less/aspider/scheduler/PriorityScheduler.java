@@ -68,7 +68,7 @@ public class PriorityScheduler implements Scheduler {
 
     }
 
-    protected boolean shouldReserved(Request request) {
+    private boolean shouldReserved(Request request) {
         return request.getExtra(Request.CYCLE_TRIED_TIMES) != null;
     }
 }

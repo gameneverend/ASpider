@@ -38,7 +38,13 @@ public class QueueScheduler implements Scheduler {
         // nothing to do
     }
 
-    protected boolean shouldReserved(Request request) {
+    /**
+     * 是否重复供应
+     * 首次请求返回false,失败重试时返回true
+     * @param request
+     * @return
+     */
+    private boolean shouldReserved(Request request) {
         return request.getExtra(Request.CYCLE_TRIED_TIMES) != null;
     }
 }
