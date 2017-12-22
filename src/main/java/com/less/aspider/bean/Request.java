@@ -46,12 +46,16 @@ public class Request implements Serializable {
         return this;
     }
 
+    public String getUrl(){
+        return url;
+    }
+
     public Request setPriority(long priority) {
         this.priority = priority;
         return this;
     }
 
-    public String getUrl(){
-        return url;
+    public long getPriority() {
+        return priority;
     }
 }
