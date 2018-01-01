@@ -62,9 +62,23 @@ public class ASpider implements Runnable {
 
     private ExecutorService executorService;
 
+    private int retrySleepTime = 1000;
+
+    private int sleepTime = 5000;
+
     public static ASpider create() {
         ASpider aSpider = new ASpider();
         return aSpider;
+    }
+
+    public ASpider sleepTime(int sleepTime){
+        this.sleepTime = sleepTime;
+        return this;
+    }
+
+    public ASpider retrySleepTime(int retrySleepTime) {
+        this.retrySleepTime = retrySleepTime;
+        return this;
     }
 
     public ASpider pageProcessor(PageProcessor pageProcessor){
@@ -179,12 +193,12 @@ public class ASpider implements Runnable {
                 pipeline.process(page.getFields());
             }
         }
-        ThreadUtils.sleep(3000);
+        ThreadUtils.sleep(sleepTime);
     }
 
     private void onDownloaderFail(Request request) {
         if (errorRetryTimes == 0) {
-            ThreadUtils.sleep(3000);
+            ThreadUtils.sleep(sleepTime);
         } else {
             Object cycleTriedTimesObject = request.getExtra(Request.CYCLE_TRIED_TIMES);
             // 首次重试请求
@@ -197,7 +211,7 @@ public class ASpider implements Runnable {
                     addRequest(SerializationUtil.clone(request).setPriority(0).putExtra(Request.CYCLE_TRIED_TIMES, cycleTriedTimes));
                 }
             }
-            ThreadUtils.sleep(1000);
+            ThreadUtils.sleep(retrySleepTime);
         }
     }
 
