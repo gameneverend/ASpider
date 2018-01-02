@@ -34,6 +34,7 @@ public class OkHttpDownloader implements Downloader {
         }
         if (null != bytes) {
             page.setUrl(request.getUrl());
+            page.setRefererUrl(request.getRefererUrl());
             page.setRawText(new String(bytes));
             page.setDownloadSuccess(true);
         } else {

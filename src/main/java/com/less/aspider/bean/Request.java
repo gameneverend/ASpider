@@ -13,9 +13,12 @@ public class Request implements Serializable {
     private static final long serialVersionUID = 2062192774891352043L;
 
     public static final String CYCLE_TRIED_TIMES = "_cycle_tried_times";
+
     private Map<String, Object> extras;
 
     private String url;
+
+    private String refererUrl;
 
     private String method;
 
@@ -29,6 +32,11 @@ public class Request implements Serializable {
 
     public Request(String url) {
         this.url = url;
+    }
+
+    public Request(String url, String refererUrl) {
+        this.url = url;
+        this.refererUrl = refererUrl;
     }
 
     public Object getExtra(String key) {
@@ -57,5 +65,13 @@ public class Request implements Serializable {
 
     public long getPriority() {
         return priority;
+    }
+
+    public void setRefererUrl(String refererUrl){
+        this.refererUrl = refererUrl;
+    }
+
+    public String getRefererUrl() {
+        return refererUrl;
     }
 }

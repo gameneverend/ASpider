@@ -13,6 +13,8 @@ public class Page {
 
     private String url;
 
+    private String refererUrl;
+
     private boolean skip;
 
     private Map<String, Object> fields = new LinkedHashMap<String, Object>();
@@ -51,15 +53,15 @@ public class Page {
         return targetRequests;
     }
 
-    public void addTargetRequests(List<String> urls) {
+    public void addTargetRequests(String refererUrl,List<String> urls) {
         for (String url : urls) {
-            targetRequests.add(new Request(url));
+            targetRequests.add(new Request(url,refererUrl));
         }
     }
 
-    public void addTargetRequests(String ...urls) {
+    public void addTargetRequests(String refererUrl,String ...urls) {
         for (String url : urls) {
-            targetRequests.add(new Request(url));
+            targetRequests.add(new Request(url,refererUrl));
         }
     }
 
@@ -85,5 +87,13 @@ public class Page {
 
     public String getRawText() {
         return rawText;
+    }
+
+    public void setRefererUrl(String refererUrl) {
+        this.refererUrl = refererUrl;
+    }
+
+    public String getRefererUrl() {
+        return refererUrl;
     }
 }

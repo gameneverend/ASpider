@@ -106,9 +106,9 @@ public class ASpider implements Runnable {
         return this;
     }
 
-    public ASpider urls(String... urls) {
+    public ASpider urls(String refererUrl,String... urls) {
         for (String url : urls) {
-            addRequest(new Request(url));
+            addRequest(new Request(url,refererUrl));
         }
         signalNewUrl();
         return this;
