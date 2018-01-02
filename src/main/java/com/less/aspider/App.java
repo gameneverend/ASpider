@@ -60,6 +60,7 @@ public class App {
                 })
                 .thread(10)
                 .downloader(downloader)
+                // 注意BDB由于是持久化的,所以如果第二次执行起始url已存在会直接跳过程序结束.
                 .scheduler(new BDBScheduler())
                 .addPipeline(new OneFilePipeline("F:/JianShuURL.txt"))
                 .urls("https://www.jianshu.com/u/2900feeb8251")
