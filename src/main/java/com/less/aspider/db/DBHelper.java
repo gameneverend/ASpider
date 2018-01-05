@@ -17,12 +17,18 @@ public class DBHelper {
 	private static Connection connection = null;
 	private static PreparedStatement psStatement = null;
 	private static ResultSet resultSet = null;
-	private static String driver = "org.sqlite.JDBC";// MySQL: com.mysql.jdbc.Driver
+	private static String sqliteDriver = "org.sqlite.JDBC";
+	private static String mysqlDriver = "com.mysql.jdbc.Driver";
+	private static String sqliteUrl = "jdbc:sqlite:" + DB_NAME;
+	private static String mysqlUrl = "jdbc:mysql://localhost:3306/test";
+
+	private static final int TYPE_MYSQL = 0x001;
+	private static final int TYPE_SQLITE = 0x002;
+	private static int TYPE = TYPE_SQLITE;
 
 	static {
 		try {
-			// 加载驱动
-			Class.forName(driver);
+			Class.forName(sqliteDriver);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -31,8 +37,13 @@ public class DBHelper {
 	/** 获取连接 */
 	private static Connection getConnection(){
 		try {
-			// 不需要用户名 密码 jdbc:mysql://localhost:3306/test,没有test.db 则会自动创建文件
-			Connection connection = DriverManager.getConnection("jdbc:sqlite:" + DB_NAME);
+			Connection connection = null;
+			// sqlite不需要用户名密码 ,没有test.db 则会自动创建文件
+			if (TYPE == TYPE_SQLITE) {
+				connection = DriverManager.getConnection(sqliteUrl);
+			} else if(TYPE == TYPE_MYSQL) {
+				connection = DriverManager.getConnection(mysqlUrl, "root","root");
+			}
 			return connection;
 		} catch (Exception e) {
 			e.printStackTrace();
