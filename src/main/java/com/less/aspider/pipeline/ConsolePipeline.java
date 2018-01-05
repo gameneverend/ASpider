@@ -13,7 +13,7 @@ public class ConsolePipeline implements Pipeline {
     @Override
     public void process(Map<String, Object> fields) {
         for (Map.Entry<String, Object> entry : fields.entrySet()) {
-            System.out.println(entry.getKey() + ":\t" + entry.getValue());
+            System.err.println(entry.getKey() + ":\t" + entry.getValue());
         }
     }
 }
