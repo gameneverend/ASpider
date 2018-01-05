@@ -5,6 +5,7 @@ import com.less.aspider.util.Singleton;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -17,6 +18,7 @@ import okhttp3.Response;
 
 public class OkHttpUtils {
     private OkHttpClient okHttp;
+    private Map<String,String> headers = null;
 
     static public OkHttpUtils getDefault() {
         return gDefault.get();
@@ -34,11 +36,19 @@ public class OkHttpUtils {
         }
     };
 
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
 
     public byte[] get(String url) {
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .get();
+        if (null != headers) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                builder.header(entry.getKey(), entry.getValue());
+            }
+        }
         try {
             Response response = okHttp.newCall(builder.build()).execute();
             byte[] bytes = response.body().bytes();
@@ -53,7 +63,11 @@ public class OkHttpUtils {
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .get();
-
+        if (null != headers) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                builder.header(entry.getKey(), entry.getValue());
+            }
+        }
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host,port));
         Call call = okHttp.newBuilder()
                 .proxy(proxy)

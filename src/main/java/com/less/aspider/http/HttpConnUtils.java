@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * Created by deeper on 2017/12/20.
@@ -19,6 +20,8 @@ public class HttpConnUtils {
         return gDefault.get();
     }
 
+    private Map<String,String> headers = null;
+
     private static final Singleton<HttpConnUtils> gDefault = new Singleton<HttpConnUtils>() {
 
         @Override
@@ -28,12 +31,21 @@ public class HttpConnUtils {
         }
     };
 
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
     public byte[] sendRequest(String url){
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setInstanceFollowRedirects(true);
             connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
             connection.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            if (null != headers) {
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    connection.setRequestProperty(entry.getKey(),entry.getValue());
+                }
+            }
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(1000 * 30);
             connection.setReadTimeout(1000 * 30);
@@ -63,6 +75,11 @@ public class HttpConnUtils {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(proxy);
         connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
         connection.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+        if (null != headers) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                connection.setRequestProperty(entry.getKey(),entry.getValue());
+            }
+        }
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(1000 * 30);
         connection.setReadTimeout(1000 * 30);

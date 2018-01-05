@@ -7,6 +7,8 @@ import com.less.aspider.http.OkHttpUtils;
 import com.less.aspider.proxy.ProxyProvider;
 import com.less.aspider.util.L;
 
+import java.util.Map;
+
 /**
  * @author deeper
  * @date 2017/12/17
@@ -19,6 +21,13 @@ public class OkHttpDownloader implements Downloader {
     @Override
     public void setProxyProvider(ProxyProvider proxyProvider){
         this.proxyProvider = proxyProvider;
+    }
+
+    @Override
+    public void setHeaders(Map<String, String> headers) {
+        if (null != headers) {
+            OkHttpUtils.getDefault().setHeaders(headers);
+        }
     }
 
     @Override
