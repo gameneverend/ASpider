@@ -1,5 +1,6 @@
-package com.less.aspider;
+package com.less.aspider.samples;
 
+import com.less.aspider.ASpider;
 import com.less.aspider.bean.Page;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * @author Administrator
  */
-public class App {
+public class JianShuSpider {
     public static final String BASE_URL = "https://www.jianshu.com";
     public static void main(String args[]) {
         final String userRegex = "https://www\\.jianshu\\.com/u/[a-zA-Z0-9]*";

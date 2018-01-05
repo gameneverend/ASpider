@@ -1,5 +1,6 @@
-package com.less.aspider;
+package com.less.aspider.samples;
 
+import com.less.aspider.ASpider;
 import com.less.aspider.bean.Page;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
