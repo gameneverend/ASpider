@@ -5,6 +5,7 @@ import com.less.aspider.bean.Proxy;
 import com.less.aspider.bean.Request;
 import com.less.aspider.http.OkHttpUtils;
 import com.less.aspider.proxy.ProxyProvider;
+import com.less.aspider.util.L;
 
 /**
  * @author deeper
@@ -26,10 +27,10 @@ public class OkHttpDownloader implements Downloader {
         Proxy proxyBean = null;
         byte[] bytes = null;
         if (proxyProvider != null && (proxyBean = proxyProvider.getProxy()) != null) {
-            System.out.println("======> Request Proxy: " + proxyBean.getHost() + " : " + proxyBean.getPort());
+            L.d("======> Request Proxy: " + request.getUrl() + " " + proxyBean.getHost() + " : " + proxyBean.getPort());
             bytes = OkHttpUtils.getDefault().getByProxy(request.getUrl(),proxyBean.getHost(),proxyBean.getPort());
         } else {
-            System.out.println("=====> Request Nomal <=====");
+            L.d("=====> Request Nomal: " + request.getUrl() + " <=====");
             bytes = OkHttpUtils.getDefault().get(request.getUrl());
         }
         if (null != bytes) {

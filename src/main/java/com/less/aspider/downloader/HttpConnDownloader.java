@@ -5,6 +5,7 @@ import com.less.aspider.bean.Proxy;
 import com.less.aspider.bean.Request;
 import com.less.aspider.http.HttpConnUtils;
 import com.less.aspider.proxy.ProxyProvider;
+import com.less.aspider.util.L;
 
 /**
  * @author deeper
@@ -26,10 +27,13 @@ public class HttpConnDownloader implements Downloader {
         Proxy proxyBean = null;
         byte[] bytes = null;
         if (proxyProvider != null && (proxyBean = proxyProvider.getProxy()) != null) {
-            System.out.println("======> Request Proxy: " + request.getUrl() + " " + proxyBean.getHost() + " : " + proxyBean.getPort());
-            bytes = HttpConnUtils.getDefault().sendRequestByProxy(request.getUrl(),proxyBean.getHost(),proxyBean.getPort());
+            L.d("======> Request Proxy: " + request.getUrl() + " " + proxyBean.getHost() + " : " + proxyBean.getPort());
+            try {
+                bytes = HttpConnUtils.getDefault().sendRequestByProxy(request.getUrl(),proxyBean.getHost(),proxyBean.getPort());
+            } catch (Exception ignore) {
+            }
         } else {
-            System.out.println("=====> Request Nomal: " + request.getUrl() + " <=====");
+            L.d("=====> Request Nomal: " + request.getUrl() + " <=====");
             bytes = HttpConnUtils.getDefault().sendRequest(request.getUrl());
         }
         if (null != bytes) {

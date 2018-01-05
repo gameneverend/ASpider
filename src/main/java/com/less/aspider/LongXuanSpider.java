@@ -11,7 +11,7 @@ import com.less.aspider.util.RegexUtils;
 import java.io.File;
 import java.util.List;
 
-/**U
+/**
  * @author Administrator
  */
 public class LongXuanSpider {
@@ -19,10 +19,10 @@ public class LongXuanSpider {
     public static void main(String args[]) {
         final String regex = "(http)+://[^\\s|\\?|&|'|\"]+(com|cn|org|net)+?";
 
-        String path = System.getProperty("user.dir") + File.separator + "proxy.txt";
+        String path = System.getProperty("user.dir") + File.separator + "ASpidder" + File.separator + "src/main/java/proxy.txt";
         ProxyProvider proxyProvider = SimpleProxyProvider.from(path);
         Downloader downloader = new HttpConnDownloader();
-        // downloader.setProxyProvider(proxyProvider);
+        downloader.setProxyProvider(proxyProvider);
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
                     @Override
