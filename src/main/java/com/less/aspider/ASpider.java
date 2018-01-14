@@ -11,6 +11,7 @@ import com.less.aspider.scheduler.QueueScheduler;
 import com.less.aspider.scheduler.Scheduler;
 import com.less.aspider.util.CloseUtils;
 import com.less.aspider.util.CountableThreadPool;
+import com.less.aspider.util.L;
 import com.less.aspider.util.SerializationUtil;
 import com.less.aspider.util.ThreadUtils;
 
@@ -255,5 +256,13 @@ public class ASpider implements Runnable {
             throw new IllegalArgumentException("threadNum should be more than one!");
         }
         return this;
+    }
+
+    public void stop() {
+        if (stat.compareAndSet(STAT_RUNNING,STAT_STOPPED)) {
+            L.d("Spider stop success!");
+        } else {
+            L.d("Spider stop fail!");
+        }
     }
 }

@@ -79,6 +79,15 @@ public class JianShuUser {
     private List<BadgesBean> badges;
     private List<?> work_exps;
     private List<?> educations;
+    private String jsonText;
+
+    public String getJsonText() {
+        return jsonText;
+    }
+
+    public void setJsonText(String jsonText) {
+        this.jsonText = jsonText;
+    }
 
     public int getId() {
         return id;

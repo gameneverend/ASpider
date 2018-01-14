@@ -13,22 +13,36 @@ import java.util.Map;
 
 public class DBHelper {
 
-	private static final String DB_NAME = "aspider.db";
+	private static String sDBName = "aspider.db";
 	private static Connection connection = null;
 	private static PreparedStatement psStatement = null;
 	private static ResultSet resultSet = null;
 	private static String sqliteDriver = "org.sqlite.JDBC";
 	private static String mysqlDriver = "com.mysql.jdbc.Driver";
-	private static String sqliteUrl = "jdbc:sqlite:" + DB_NAME;
-	private static String mysqlUrl = "jdbc:mysql://localhost:3306/test";
+	private static String sqliteUrl = "jdbc:sqlite:" + sDBName;
+	private static String mysqlUrl = "jdbc:mysql://localhost:3306/" + sDBName;
 
-	private static final int TYPE_MYSQL = 0x001;
-	private static final int TYPE_SQLITE = 0x002;
-	private static int TYPE = TYPE_SQLITE;
+	public static final int TYPE_MYSQL = 0x001;
+	public static final int TYPE_SQLITE = 0x002;
+	private static int sType = TYPE_SQLITE;
+
+	public static void setType(int type) {
+		sType = type;
+	}
+
+	public static void setDBName(String dbName) {
+		sDBName = dbName;
+		sqliteUrl = "jdbc:sqlite:" + sDBName;
+		mysqlUrl = "jdbc:mysql://localhost:3306/" + sDBName;
+	}
 
 	static {
 		try {
-			Class.forName(sqliteDriver);
+			if (sType == TYPE_MYSQL) {
+				Class.forName(mysqlDriver);
+			} else if(sType == TYPE_SQLITE){
+				Class.forName(sqliteDriver);
+			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -39,9 +53,9 @@ public class DBHelper {
 		try {
 			Connection connection = null;
 			// sqlite不需要用户名密码 ,没有test.db 则会自动创建文件
-			if (TYPE == TYPE_SQLITE) {
+			if (sType == TYPE_SQLITE) {
 				connection = DriverManager.getConnection(sqliteUrl);
-			} else if(TYPE == TYPE_MYSQL) {
+			} else if(sType == TYPE_MYSQL) {
 				connection = DriverManager.getConnection(mysqlUrl, "root","root");
 			}
 			return connection;

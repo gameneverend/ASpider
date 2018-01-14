@@ -38,7 +38,7 @@ public class HttpConnDownloader implements Downloader {
         if (proxyProvider != null && (proxyBean = proxyProvider.getProxy()) != null) {
             L.d("======> Request Proxy: " + request.getUrl() + " " + proxyBean.getHost() + " : " + proxyBean.getPort());
             try {
-                bytes = HttpConnUtils.getDefault().sendRequestByProxy(request.getUrl(),proxyBean.getHost(),proxyBean.getPort());
+                bytes = HttpConnUtils.getDefault().sendRequestByProxy(request.getUrl(),proxyBean);
             } catch (Exception ignore) {
             }
         } else {
