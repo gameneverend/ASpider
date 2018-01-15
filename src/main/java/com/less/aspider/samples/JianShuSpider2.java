@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.less.aspider.ASpider;
 import com.less.aspider.bean.Page;
 import com.less.aspider.bean.Proxy;
+import com.less.aspider.bean.Request;
 import com.less.aspider.db.DBHelper;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
@@ -12,10 +13,11 @@ import com.less.aspider.pipeline.Pipeline;
 import com.less.aspider.processor.PageProcessor;
 import com.less.aspider.proxy.ProxyProvider;
 import com.less.aspider.proxy.SimpleProxyProvider;
+import com.less.aspider.samples.bean.JianShuFollower;
 import com.less.aspider.samples.bean.JianShuFollowing;
 import com.less.aspider.samples.bean.JianShuUser;
 import com.less.aspider.samples.db.JianshuDao;
-import com.less.aspider.util.L;
+import com.less.aspider.scheduler.PriorityScheduler;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -46,8 +48,8 @@ public class JianShuSpider2 {
         headers.put("X-App-Name", "haruki");
         headers.put("X-App-Version", "3.2.0");
         headers.put("X-Device-Guid", "127051030369235");
-        headers.put("X-Timestamp", "1515934475");
-        headers.put("X-Auth-1", "464da4de6689e64a3cb3fa34c27f72cb");
+        headers.put("X-Timestamp", "1516000407");
+        headers.put("X-Auth-1", "beb8952985c1a75e7c7d6b341073c246");
         downloader.setHeaders(headers);
         downloader.setProxyProvider(proxyProvider);
 
@@ -58,52 +60,64 @@ public class JianShuSpider2 {
                         String url = page.getUrl();
                         Gson gson = new Gson();
                         if (url.contains("following?app[name]=haruki")) {
-                            page.putField("following",page.getRawText());
-
-                            // following
+                            // 关注列表
                             Type type = new TypeToken<ArrayList<JianShuFollowing>>() {}.getType();
                             List<JianShuFollowing> results = gson.fromJson(page.getRawText(), type);
 
-                            List<String> urls = new ArrayList<String>();
                             for (JianShuFollowing user : results) {
                                 // userId 非博客地址
                                 int userId = user.getId();
                                 String slug = user.getSlug();
                                 String homePage = "https://s0.jianshuapi.com/v2/users/" + userId;
-                                urls.add(homePage);
                                 String blog = "https://www.jianshu.com/u/" + slug;
+                                // 优先抓取个人主页
+                                page.addTargetRequests(new Request(homePage,null,1));
                             }
-                            page.addTargetRequests(null, urls);
+                        } else if (url.contains("followers?app[name]=haruki")) {
+                            // 粉丝列表
+                            Type type = new TypeToken<ArrayList<JianShuFollower>>() {}.getType();
+                            List<JianShuFollower> results = gson.fromJson(page.getRawText(), type);
+                            for (JianShuFollower follower : results) {
+                                int userId = follower.getId();
+                                String slug = follower.getSlug();
+                                String homePage = "https://s0.jianshuapi.com/v2/users/" + userId;
+                                String blog = "https://www.jianshu.com/u/" + slug;
+                                // 优先抓取个人主页
+                                page.addTargetRequests(new Request(homePage,null,1));
+                            }
                         } else {
                             // user homePage
-                            L.d("HomePage ======> " + page.getUrl());
                             JianShuUser jianShuUser = gson.fromJson(page.getRawText(), JianShuUser.class);
                             jianShuUser.setJsonText(page.getRawText());
-                            page.putField("user",jianShuUser);
+                            page.putField("user", jianShuUser);
                             int followers_count = jianShuUser.getFollowers_count();
                             if (followers_count > 0) {
                                 int userId = jianShuUser.getId();
-                                String followUrl = "https://s0.jianshuapi.com/v1/users/" + userId + "/following?app[name]=haruki&app[version]=3.2.0&device[guid]=833051020369123&count=200";
-                                page.addTargetRequests(null,followUrl);
+
+                                String followerUrl = "https://s0.jianshuapi.com/v1/users/" + userId + "/followers?app[name]=haruki&app[version]=3.2.0&device[guid]=127051030369235&count=1000&page=1";
+                                page.addTargetRequests(new Request(followerUrl,null,-1));
+
+                                String followUrl = "https://s0.jianshuapi.com/v1/users/" + userId + "/following?app[name]=haruki&app[version]=3.2.0&device[guid]=127051030369235&count=1000&page=1";
+                                page.addTargetRequests(new Request(followUrl,null,-1));
                             }
                         }
                     }
                 })
                 .thread(30)
                 .downloader(downloader)
+                .scheduler(new PriorityScheduler())
                 .sleepTime(0)
                 .retrySleepTime(0)
                 .addPipeline(new Pipeline() {
                     @Override
                     public void process(Map<String, Object> fields) {
                         for (Map.Entry<String, Object> entry : fields.entrySet()) {
-                            System.err.println(entry.getKey() + ":\t" + entry.getValue());
                             JianShuUser jianShuUser = (JianShuUser) entry.getValue();
                             jianshuDao.save(jianShuUser);
                         }
                     }
                 })
-                .urls(null,"https://s0.jianshuapi.com/v2/users/b5deefa17053")
+                .urls(null,"https://s0.jianshuapi.com/v2/users/5c62892e3d47")
                 .run();
     }
 }

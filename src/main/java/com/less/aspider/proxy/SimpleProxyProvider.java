@@ -70,7 +70,7 @@ public class SimpleProxyProvider implements ProxyProvider {
         if (!page.isDownloadSuccess()) {
             synchronized (SimpleProxyProvider.class) {
                 int errorTiems = proxy.getErrorTimes();
-                if (errorTiems > 10) {
+                if (errorTiems > 50) {
                     proxies.remove(proxy);
                 } else {
                     proxy.setErrorTimes(errorTiems + 1);

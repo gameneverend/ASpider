@@ -53,6 +53,22 @@ public class Page {
         return targetRequests;
     }
 
+    public void addTargetRequests(List<Request> requests) {
+        targetRequests.addAll(requests);
+    }
+
+    public void addTargetRequests(Request request) {
+        if (null != request) {
+            targetRequests.add(request);
+        }
+    }
+
+    public void addTargetRequestsNoReferer(String ...urls) {
+        for (String url : urls) {
+            targetRequests.add(new Request(url));
+        }
+    }
+
     public void addTargetRequests(String refererUrl,List<String> urls) {
         for (String url : urls) {
             targetRequests.add(new Request(url,refererUrl));
