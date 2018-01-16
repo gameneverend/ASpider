@@ -15,6 +15,18 @@ public interface ProxyProvider {
     Proxy getProxy();
 
     /**
+     * 添加一个代理
+     * @param proxy
+     */
+    void add(Proxy proxy);
+
+    /**
+     * 移除一个代理
+     * @param proxy
+     */
+    void remove(Proxy proxy);
+
+    /**
      * 该方法在okhttp使用代理下载完调用,代理池可以据此做些逻辑处理
      * @param proxy
      * @param page

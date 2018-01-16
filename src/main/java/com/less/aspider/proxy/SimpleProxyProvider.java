@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 public class SimpleProxyProvider implements ProxyProvider {
+
     private List<Proxy> proxies;
     private AtomicInteger pointer;
 
@@ -49,12 +50,22 @@ public class SimpleProxyProvider implements ProxyProvider {
         return new SimpleProxyProvider(proxies);
     }
 
+    @Override
+    public void add(Proxy proxy) {
+        proxies.add(proxy);
+    }
+
+    @Override
+    public void remove(Proxy proxy) {
+        proxies.remove(proxy);
+    }
+
     public static SimpleProxyProvider from(Proxy... proxies) {
         List<Proxy> proxiesTemp = new ArrayList<Proxy>(proxies.length);
         for (Proxy proxy : proxies) {
             proxiesTemp.add(proxy);
         }
-        return new SimpleProxyProvider(Collections.unmodifiableList(proxiesTemp));
+        return new SimpleProxyProvider(Collections.synchronizedList(proxiesTemp));
     }
 
     @Override

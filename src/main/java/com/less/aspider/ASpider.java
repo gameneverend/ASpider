@@ -3,7 +3,7 @@ package com.less.aspider;
 import com.less.aspider.bean.Page;
 import com.less.aspider.bean.Request;
 import com.less.aspider.downloader.Downloader;
-import com.less.aspider.downloader.OkHttpDownloader;
+import com.less.aspider.downloader.HttpConnDownloader;
 import com.less.aspider.pipeline.ConsolePipeline;
 import com.less.aspider.pipeline.Pipeline;
 import com.less.aspider.processor.PageProcessor;
@@ -205,7 +205,9 @@ public class ASpider implements Runnable {
         }
         if (!page.isSkip()) {
             for (Pipeline pipeline : pipelines) {
-                pipeline.process(page.getFields());
+                if (page.getFields() != null) {
+                    pipeline.process(page.getFields());
+                }
             }
         }
         ThreadUtils.sleep(sleepTime);
@@ -232,7 +234,7 @@ public class ASpider implements Runnable {
 
     private void initComponent() {
         if (downloader == null) {
-            this.downloader = new OkHttpDownloader();
+            this.downloader = new HttpConnDownloader();
         }
         if (pipelines.isEmpty()) {
             pipelines.add(new ConsolePipeline());

@@ -5,6 +5,8 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
     compile 'com.google.code.gson:gson:2.8.0'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.24'
+    // compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
+    compile group: 'us.codecraft', name: 'xsoup', version: '0.3.1'
 }
 
 sourceCompatibility = "1.7"
