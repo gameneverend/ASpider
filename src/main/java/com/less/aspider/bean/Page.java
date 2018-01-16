@@ -11,13 +11,15 @@ import java.util.Map;
 
 public class Page {
 
+    private Request originRequest;
+
     private String url;
 
     private String refererUrl;
 
     private boolean skip;
 
-    private Map<String, Object> fields = new LinkedHashMap<String, Object>();
+    private Map<String, Object> fields;
 
     private boolean downloadSuccess;
 
@@ -49,15 +51,7 @@ public class Page {
         return skip;
     }
 
-    public List<Request> getTargetRequests() {
-        return targetRequests;
-    }
-
-    public void addTargetRequests(List<Request> requests) {
-        targetRequests.addAll(requests);
-    }
-
-    public void addTargetRequests(Request request) {
+    public void addTargetRequest(Request request) {
         if (null != request) {
             targetRequests.add(request);
         }
@@ -69,16 +63,14 @@ public class Page {
         }
     }
 
-    public void addTargetRequests(String refererUrl,List<String> urls) {
+    public void addTargetRequestsHasReferer(List<String> urls,String refererUrl) {
         for (String url : urls) {
             targetRequests.add(new Request(url,refererUrl));
         }
     }
 
-    public void addTargetRequests(String refererUrl,String ...urls) {
-        for (String url : urls) {
-            targetRequests.add(new Request(url,refererUrl));
-        }
+    public List<Request> getTargetRequests() {
+        return targetRequests;
     }
 
     public <T> T getField(String key) {
@@ -94,6 +86,9 @@ public class Page {
     }
 
     public <T> void putField(String key, T value) {
+        if (fields == null) {
+            fields = new LinkedHashMap<String, Object>();
+        }
         fields.put(key, value);
     }
 
@@ -111,5 +106,13 @@ public class Page {
 
     public String getRefererUrl() {
         return refererUrl;
+    }
+
+    public Request getOriginRequest() {
+        return originRequest;
+    }
+
+    public void setOriginRequest(Request originRequest) {
+        this.originRequest = originRequest;
     }
 }

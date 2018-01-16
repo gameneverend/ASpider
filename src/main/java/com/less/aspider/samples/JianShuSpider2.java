@@ -71,7 +71,7 @@ public class JianShuSpider2 {
                                 String homePage = "https://s0.jianshuapi.com/v2/users/" + userId;
                                 String blog = "https://www.jianshu.com/u/" + slug;
                                 // 优先抓取个人主页
-                                page.addTargetRequests(new Request(homePage,null,1));
+                                page.addTargetRequest(new Request(homePage,1));
                             }
                         } else if (url.contains("followers?app[name]=haruki")) {
                             // 粉丝列表
@@ -83,7 +83,7 @@ public class JianShuSpider2 {
                                 String homePage = "https://s0.jianshuapi.com/v2/users/" + userId;
                                 String blog = "https://www.jianshu.com/u/" + slug;
                                 // 优先抓取个人主页
-                                page.addTargetRequests(new Request(homePage,null,1));
+                                page.addTargetRequest(new Request(homePage,1));
                             }
                         } else {
                             // user homePage
@@ -95,10 +95,10 @@ public class JianShuSpider2 {
                                 int userId = jianShuUser.getId();
 
                                 String followerUrl = "https://s0.jianshuapi.com/v1/users/" + userId + "/followers?app[name]=haruki&app[version]=3.2.0&device[guid]=127051030369235&count=1000&page=1";
-                                page.addTargetRequests(new Request(followerUrl,null,-1));
+                                page.addTargetRequest(new Request(followerUrl,-1));
 
                                 String followUrl = "https://s0.jianshuapi.com/v1/users/" + userId + "/following?app[name]=haruki&app[version]=3.2.0&device[guid]=127051030369235&count=1000&page=1";
-                                page.addTargetRequests(new Request(followUrl,null,-1));
+                                page.addTargetRequest(new Request(followUrl,-1));
                             }
                         }
                     }
@@ -117,7 +117,7 @@ public class JianShuSpider2 {
                         }
                     }
                 })
-                .urls(null,"https://s0.jianshuapi.com/v2/users/5c62892e3d47")
+                .urls("https://s0.jianshuapi.com/v2/users/5c62892e3d47")
                 .run();
     }
 }

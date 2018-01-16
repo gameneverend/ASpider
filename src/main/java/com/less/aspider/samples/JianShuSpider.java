@@ -41,7 +41,7 @@ public class JianShuSpider {
                             // 选择该【个人主页】的关注列表页面
                             String followUrl = RegexUtils.get(followRegex).selectSingle(page.getRawText(),0);
                             followUrl = BASE_URL + followUrl;
-                            page.addTargetRequests(followUrl);
+                            page.addTargetRequestsNoReferer(followUrl);
                             String fansCount = RegexUtils.get(fansRegex).selectSingle(page.getRawText(),1);
                             int fans = Integer.parseInt(fansCount);
                             if (fans > -1) {
@@ -54,7 +54,7 @@ public class JianShuSpider {
                             List<String> list = RegexUtils.get(chooseRegex).selectList(page.getRawText(),1);
                             for (String userUrl : list) {
                                 userUrl = BASE_URL + "/u/" + userUrl;
-                                page.addTargetRequests(userUrl);
+                                page.addTargetRequestsNoReferer(userUrl);
                             }
                         }
                     }

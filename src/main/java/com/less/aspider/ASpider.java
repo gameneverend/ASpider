@@ -107,9 +107,23 @@ public class ASpider implements Runnable {
         return this;
     }
 
-    public ASpider urls(String refererUrl,String... urls) {
+    public ASpider urlsHasReferer(String startUrl,String refererUrl) {
+        addRequest(new Request(startUrl,refererUrl));
+        signalNewUrl();
+        return this;
+    }
+
+    public ASpider urlsHasReferer(String[] urls,String refererUrl) {
         for (String url : urls) {
             addRequest(new Request(url,refererUrl));
+        }
+        signalNewUrl();
+        return this;
+    }
+
+    public ASpider urls(String... urls) {
+        for (String url : urls) {
+            addRequest(new Request(url));
         }
         signalNewUrl();
         return this;
@@ -264,5 +278,12 @@ public class ASpider implements Runnable {
         } else {
             L.d("Spider stop fail!");
         }
+    }
+
+    public int getThreadAlive() {
+        if (threadPool == null) {
+            return 0;
+        }
+        return threadPool.getThreadAlive();
     }
 }

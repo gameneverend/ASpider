@@ -31,11 +31,11 @@ public class LongXuanSpider {
                         String url = page.getUrl();
                         if (url.equals(startUrl)) {
                             List<String> list = RegexUtils.get(regex).selectList(page.getRawText(), 0);
-                            page.addTargetRequests(url, list);
+                            page.addTargetRequestsHasReferer(list,url);
                         } else if(RegexUtils.get(regex).matchers(url) && page.getRefererUrl().equals(startUrl)){
                             page.putField("url", url);
                             List<String> list = RegexUtils.get(regex).selectList(page.getRawText(),0);
-                            page.addTargetRequests(url,list);
+                            page.addTargetRequestsHasReferer(list,url);
                         }
                     }
                 })
@@ -43,7 +43,7 @@ public class LongXuanSpider {
                 .sleepTime(0)
                 .retrySleepTime(0)
                 .downloader(downloader)
-                .urls(startUrl,startUrl)
+                .urlsHasReferer(startUrl,startUrl)
                 .run();
     }
 }

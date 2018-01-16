@@ -76,7 +76,7 @@ public class FiveApeSpider {
                         Elements elements = doc.select("a");
                         for (Element e : elements) {
                             String href = e.attr("abs:href");
-                            page.addTargetRequests(new Request(href));
+                            page.addTargetRequest(new Request(href));
                         }
                     }
                 })
@@ -95,7 +95,7 @@ public class FiveApeSpider {
                         }
                     }
                 })
-                .urls(null,"http://www.51ape.com/")
+                .urls("http://www.51ape.com/")
                 .run();
     }
 }

@@ -26,10 +26,13 @@ public class Request implements Serializable {
 
     private long priority;
 
-    private Map<String, String> cookies = new HashMap<String, String>();
+    private Map<String, String> cookies;
 
-    private Map<String, String> headers = new HashMap<String, String>();
+    private Map<String, String> headers;
 
+    public Request() {
+
+    }
     public Request(String url) {
         this.url = url;
     }
@@ -39,7 +42,12 @@ public class Request implements Serializable {
         this.refererUrl = refererUrl;
     }
 
-    public Request(String url,String refererUrl,long priority) {
+    public Request(String url, long priority) {
+        this.url = url;
+        this.priority = priority;
+    }
+
+    public Request(String url, String refererUrl, long priority) {
         this.url = url;
         this.refererUrl = refererUrl;
         this.priority = priority;
