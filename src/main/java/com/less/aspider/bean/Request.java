@@ -12,6 +12,12 @@ public class Request implements Serializable {
 
     private static final long serialVersionUID = 2062192774891352043L;
 
+    public static final int POST_TYPE_JSON = 0x000001;
+    public static final int POST_TYPE_FORM = 0x000002;
+
+    public static final String METHOD_GET = "GET";
+    public static final String METHOD_POST = "POST";
+
     public static final String CYCLE_TRIED_TIMES = "_cycle_tried_times";
 
     private Map<String, Object> extras;
@@ -20,7 +26,9 @@ public class Request implements Serializable {
 
     private String refererUrl;
 
-    private String method;
+    private String method = METHOD_GET;
+
+    private int postType = POST_TYPE_FORM;
 
     private String charset;
 
@@ -30,9 +38,12 @@ public class Request implements Serializable {
 
     private Map<String, String> headers;
 
+    private Map<String, Object> parameters;
+
     public Request() {
 
     }
+
     public Request(String url) {
         this.url = url;
     }
@@ -66,6 +77,10 @@ public class Request implements Serializable {
         }
         extras.put(key, value);
         return this;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getUrl(){
@@ -103,5 +118,45 @@ public class Request implements Serializable {
 
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getCharset() {
+        return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
+    }
+
+    public int getPostType() {
+        return postType;
+    }
+
+    public void setPostType(int postType) {
+        this.postType = postType;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    public Map<String, Object> addParameter(String key, Object value) {
+        if (parameters == null) {
+            parameters = new HashMap<String, Object>();
+        }
+        parameters.put(key, value);
+        return parameters;
     }
 }

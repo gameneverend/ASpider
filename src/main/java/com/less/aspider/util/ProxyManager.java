@@ -1,6 +1,7 @@
 package com.less.aspider.util;
 
 import com.less.aspider.bean.Proxy;
+import com.less.aspider.bean.Request;
 import com.less.aspider.http.HttpConnUtils;
 
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class ProxyManager {
 	}
 
 	private String downloadPage() {
-		byte[] datas = HttpConnUtils.getDefault().sendRequest(url);
+		byte[] datas = HttpConnUtils.getDefault().sendRequest(new Request(url));
 		String html = new String(datas);
 		return html;
 	}
@@ -85,7 +86,7 @@ public class ProxyManager {
 			public void run() {
 				for(int port : ports){
 					try {
-						byte[] datas = HttpConnUtils.getDefault().sendRequestByProxy("http://www.qq.com/robots.txt", new Proxy(ip, port));
+						byte[] datas = HttpConnUtils.getDefault().sendRequestByProxy(new Request("http://www.qq.com/robots.txt"), new Proxy(ip, port));
 						String html = new String(datas);
 						if (html.contains("http://www.qq.com/sitemap_index.xml")) {
 							System.err.println(ip + ":" + port);

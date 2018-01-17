@@ -38,12 +38,12 @@ public class HttpConnDownloader implements Downloader {
         if (proxyProvider != null && (proxyBean = proxyProvider.getProxy()) != null) {
             L.d("======> Request Proxy: " + request.getUrl() + " " + proxyBean.getHost() + " : " + proxyBean.getPort());
             try {
-                bytes = HttpConnUtils.getDefault().sendRequestByProxy(request.getUrl(),proxyBean);
+                bytes = HttpConnUtils.getDefault().sendRequestByProxy(request,proxyBean);
             } catch (Exception ignore) {
             }
         } else {
             L.d("=====> Request Nomal: " + request.getUrl() + " <=====");
-            bytes = HttpConnUtils.getDefault().sendRequest(request.getUrl());
+            bytes = HttpConnUtils.getDefault().sendRequest(request);
         }
         if (null != bytes) {
             page.setUrl(request.getUrl());

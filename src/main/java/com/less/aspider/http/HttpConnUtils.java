@@ -1,11 +1,15 @@
 package com.less.aspider.http;
 
+import com.google.gson.JsonObject;
+import com.less.aspider.bean.Request;
 import com.less.aspider.util.Singleton;
 
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -39,44 +43,36 @@ public class HttpConnUtils {
         this.headers = headers;
     }
 
-    public byte[] sendRequest(String url){
+    public byte[] sendRequest(Request request){
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(request.getUrl()).openConnection();
             connection.setInstanceFollowRedirects(true);
-            connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
-            connection.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-            if (null != headers) {
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    connection.setRequestProperty(entry.getKey(),entry.getValue());
-                }
-            }
-            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
+            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            appendHeaders(request,connection);
+
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestMethod(request.getMethod());
             connection.setConnectTimeout(1000 * 30);
             connection.setReadTimeout(1000 * 30);
+
+            if (request.getMethod().equals(Request.METHOD_POST)) {
+                sendPostParameters(request,connection);
+            }
             byte[] datas = readInputStream(connection.getInputStream());
             return datas;
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+
         }
         return null;
     }
 
-    private byte[] readInputStream(InputStream inStream) throws Exception {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len = 0;
-        while ((len = inStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, len);
-        }
-        byte[] datas = outStream.toByteArray();
-        outStream.close();
-        inStream.close();
-        return datas;
-    }
-
-    public byte[] sendRequestByProxy(String url, final com.less.aspider.bean.Proxy proxyBean) throws Exception {
+    public byte[] sendRequestByProxy(Request request, final com.less.aspider.bean.Proxy proxyBean) throws Exception {
         final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyBean.getHost(), proxyBean.getPort()));
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(proxy);
+        HttpURLConnection connection = (HttpURLConnection) new URL(request.getUrl()).openConnection(proxy);
         if (null != proxyBean.getUsername() && !"".equals(proxyBean.getUsername())) {
             // 方式一: 但是针对https站点并未生效
             String value = proxyBean.getUsername() + ":" + proxyBean.getPassword();
@@ -94,15 +90,67 @@ public class HttpConnUtils {
         }
         connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
         connection.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-        if (null != headers) {
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
-                connection.setRequestProperty(entry.getKey(),entry.getValue());
-            }
-        }
-        connection.setRequestMethod("GET");
+        appendHeaders(request,connection);
+
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        connection.setRequestMethod(request.getMethod());
         connection.setConnectTimeout(1000 * 30);
         connection.setReadTimeout(1000 * 30);
+
+        if (request.getMethod().equals(Request.METHOD_POST)) {
+            sendPostParameters(request,connection);
+        }
+
         byte[] datas = readInputStream(connection.getInputStream());
         return datas;
+    }
+
+    private void appendHeaders(Request request, HttpURLConnection connection) {
+        if (null != headers) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                connection.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+        }
+        if (null != request.getHeaders()) {
+            for (Map.Entry<String, String> entry : request.getHeaders().entrySet()) {
+                connection.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    private byte[] readInputStream(InputStream inStream) throws Exception {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while ((len = inStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, len);
+        }
+        byte[] datas = outStream.toByteArray();
+        outStream.close();
+        inStream.close();
+        return datas;
+    }
+
+    private void sendPostParameters(Request request,HttpURLConnection connection) throws IOException {
+        StringBuffer params = new StringBuffer();
+        OutputStream out = connection.getOutputStream();
+        switch (request.getPostType()) {
+            case Request.POST_TYPE_FORM:
+                for (Map.Entry<String, Object> entry : request.getParameters().entrySet()) {
+                    params.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+                }
+                out.write(params.toString().getBytes());
+                break;
+            case Request.POST_TYPE_JSON:
+                JsonObject jsonObject = new JsonObject();
+                for (Map.Entry<String, Object> entry : request.getParameters().entrySet()) {
+                    jsonObject.addProperty(entry.getKey(), String.valueOf(entry.getValue()));
+                }
+                out.write(jsonObject.toString().getBytes());
+                break;
+            default:
+                break;
+        }
     }
 }
