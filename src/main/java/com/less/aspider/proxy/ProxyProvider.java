@@ -2,12 +2,13 @@ package com.less.aspider.proxy;
 
 import com.less.aspider.bean.Page;
 import com.less.aspider.bean.Proxy;
+import com.less.aspider.eventbus.DataSetObserver;
 
 /**
  * Created by deeper on 2017/12/19.
  */
 
-public interface ProxyProvider {
+public interface ProxyProvider extends DataSetObserver{
     /**
      * 从代理池获取一个代理
      * @return

@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by deeper on 2017/12/19.
+ *
+ * @author deeper
+ * @date 2017/12/19
  */
 
 public class SimpleProxyProvider implements ProxyProvider {
@@ -31,9 +33,19 @@ public class SimpleProxyProvider implements ProxyProvider {
     }
 
     public static SimpleProxyProvider from(String path) {
+        File file = new File(path);
+        List<Proxy> proxies = readFile(file);
+        return new SimpleProxyProvider(proxies);
+    }
+
+    public static SimpleProxyProvider from(File file) {
+        List<Proxy> proxies = readFile(file);
+        return new SimpleProxyProvider(proxies);
+    }
+
+    private static List<Proxy> readFile(File file) {
         List<Proxy> proxies = new ArrayList<>();
         try {
-            File file = new File(path);
             List<String> lines = FileUtils.readLines(file,"UTF-8");
             for (String line : lines) {
                 try {
@@ -47,7 +59,7 @@ public class SimpleProxyProvider implements ProxyProvider {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new SimpleProxyProvider(proxies);
+        return proxies;
     }
 
     @Override
@@ -66,6 +78,15 @@ public class SimpleProxyProvider implements ProxyProvider {
             proxiesTemp.add(proxy);
         }
         return new SimpleProxyProvider(Collections.synchronizedList(proxiesTemp));
+    }
+
+    public synchronized void load(File file) {
+        List<Proxy> proxies = readFile(file);
+        for (Proxy proxy : proxies) {
+            if (!this.proxies.contains(proxy)) {
+                this.proxies.add(proxy);
+            }
+        }
     }
 
     @Override
@@ -104,5 +125,24 @@ public class SimpleProxyProvider implements ProxyProvider {
             p = pointer.get();
         }
         return p % size;
+    }
+
+    @Override
+    public void onChanged(Object param) {
+        System.out.println("onChanged: " + param);
+        System.out.println(proxies);
+        File file = (File) param;
+        load(file);
+        try {
+            // 清空代理文本,
+            FileUtils.writeStringToFile(file,"","UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onInvalidated() {
+
     }
 }
