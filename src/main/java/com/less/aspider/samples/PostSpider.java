@@ -6,7 +6,9 @@ import com.less.aspider.bean.Proxy;
 import com.less.aspider.bean.Request;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
+import com.less.aspider.eventbus.SimpleEventBus;
 import com.less.aspider.processor.PageProcessor;
+import com.less.aspider.proxy.ProxyProvider;
 import com.less.aspider.proxy.SimpleProxyProvider;
 
 import org.jsoup.Jsoup;
@@ -25,7 +27,11 @@ public class PostSpider {
     public static void main(String[] args) {
         Downloader downloader = new HttpConnDownloader();
         // fidder
-        downloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",8888)));
+        ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy("127.0.0.1", 8888));
+        downloader.setProxyProvider(proxyProvider);
+
+        SimpleEventBus.getInstance().registerDataSetObserver(proxyProvider);
+        SimpleEventBus.getInstance().startWork("F:\\temp.txt", 5, true);
 
         ASpider.create()
                 .pageProcessor(new PageProcessor() {

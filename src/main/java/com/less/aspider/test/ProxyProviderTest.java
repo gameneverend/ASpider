@@ -17,6 +17,6 @@ public class ProxyProviderTest {
 
         ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy("xx", 22));
         eventBus.registerDataSetObserver(proxyProvider);
-        eventBus.startWork("F:\\temp.txt",false);
+        eventBus.startWork("F:\\temp.txt", 5, false);
     }
 }

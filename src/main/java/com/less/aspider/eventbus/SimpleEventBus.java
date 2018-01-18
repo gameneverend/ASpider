@@ -15,12 +15,25 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleEventBus extends BaseEventBus {
 
+    private static SimpleEventBus instance;
+
     public static SimpleEventBus create() {
         return new SimpleEventBus();
     }
 
+    public static SimpleEventBus getInstance() {
+        if (instance == null) {
+            synchronized (SimpleEventBus.class) {
+                if (instance == null) {
+                    instance = new SimpleEventBus();
+                }
+            }
+        }
+        return instance;
+    }
+
     @Override
-    public void startWork(final String path, boolean daemon) {
+    public void startWork(final String path, int period, boolean daemon) {
         // org.apache.commons.lang3.concurrent.BasicThreadFactory
         // initialDelay,period,TimeUnit.SECONDS); 从现在开始initialDelay 秒之后,每隔period 秒执行一次job,不建议用Timer.
         final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
@@ -35,6 +48,6 @@ public class SimpleEventBus extends BaseEventBus {
                     System.err.println("temp proxy file not exsist!");
                 }
             }
-        },1, 10, TimeUnit.SECONDS);
+        },1, period, TimeUnit.SECONDS);
     }
 }

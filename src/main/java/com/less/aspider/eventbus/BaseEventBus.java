@@ -20,5 +20,5 @@ public abstract class BaseEventBus {
         mObservable.unregisterObserver(observer);
     }
 
-    public abstract void startWork(String path, boolean daemon);
+    public abstract void startWork(String path,int period, boolean daemon);
 }
