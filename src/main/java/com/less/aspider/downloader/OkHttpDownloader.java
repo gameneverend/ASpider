@@ -42,17 +42,19 @@ public class OkHttpDownloader implements Downloader {
             L.d("=====> Request Nomal: " + request.getUrl() + " <=====");
             bytes = OkHttpUtils.getDefault().get(request.getUrl());
         }
+        page.setUrl(request.getUrl());
+        page.setRefererUrl(request.getRefererUrl());
+        page.setOriginRequest(request);
+
         if (null != bytes) {
-            page.setUrl(request.getUrl());
-            page.setRefererUrl(request.getRefererUrl());
             page.setRawText(new String(bytes));
-            page.setOriginRequest(request);
             page.setDownloadSuccess(true);
         } else {
+            page.setRawText(null);
             page.setDownloadSuccess(false);
         }
         if (proxyProvider != null && proxyBean != null) {
-            proxyProvider.returnProxy(proxyBean,page);
+            proxyProvider.returnProxy(proxyBean, page);
         }
         return page;
     }

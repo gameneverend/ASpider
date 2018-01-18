@@ -33,6 +33,8 @@ public class ASpider implements Runnable {
     /** 失败重试次数 */
     private int errorRetryTimes = 3;
 
+    private boolean errorReturn;
+
     private Downloader downloader;
 
     private List<Pipeline> pipelines = new ArrayList<>();
@@ -191,7 +193,7 @@ public class ASpider implements Runnable {
 
     private void processRequest(Request request) {
         Page page = downloader.download(request);
-        if (page.isDownloadSuccess()){
+        if (page.isDownloadSuccess() || errorReturn){
             onDownloadSuccess(page);
         } else {
             onDownloaderFail(request);
@@ -287,5 +289,10 @@ public class ASpider implements Runnable {
             return 0;
         }
         return threadPool.getThreadAlive();
+    }
+
+    public ASpider errorReturn(boolean errorReturn) {
+        this.errorReturn = errorReturn;
+        return this;
     }
 }

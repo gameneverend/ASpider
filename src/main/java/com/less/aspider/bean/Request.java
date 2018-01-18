@@ -65,7 +65,7 @@ public class Request implements Serializable {
     }
 
     public Object getExtra(String key) {
-        if (extras == null) {
+        if (null == extras) {
             return null;
         }
         return extras.get(key);
