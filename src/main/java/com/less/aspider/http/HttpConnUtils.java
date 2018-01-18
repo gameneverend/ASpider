@@ -134,19 +134,23 @@ public class HttpConnUtils {
 
     private void sendPostParameters(Request request,HttpURLConnection connection) throws IOException {
         StringBuffer params = new StringBuffer();
-        OutputStream out = connection.getOutputStream();
+        OutputStream out = null;
         switch (request.getPostType()) {
             case Request.POST_TYPE_FORM:
+                // default: connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
                 for (Map.Entry<String, Object> entry : request.getParameters().entrySet()) {
                     params.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
                 }
+                out = connection.getOutputStream();
                 out.write(params.toString().getBytes());
                 break;
             case Request.POST_TYPE_JSON:
+                connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
                 JsonObject jsonObject = new JsonObject();
                 for (Map.Entry<String, Object> entry : request.getParameters().entrySet()) {
                     jsonObject.addProperty(entry.getKey(), String.valueOf(entry.getValue()));
                 }
+                out = connection.getOutputStream();
                 out.write(jsonObject.toString().getBytes());
                 break;
             default:

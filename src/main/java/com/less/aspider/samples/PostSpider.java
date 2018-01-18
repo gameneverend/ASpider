@@ -38,11 +38,7 @@ public class PostSpider {
                             String a_2 = doc.select("a").eq(1).attr("href");
                             String url_form = baseUrl + a_1;
                             String url_json = baseUrl + a_2;
-                            System.out.println(url_form);
-                            System.out.println(url_json);
 
-                            // Content-type: application/x-www-form-urlencoded
-                            
                             Request request1 = new Request();
                             request1.setUrl(url_form);
                             request1.setMethod(Request.METHOD_POST);
