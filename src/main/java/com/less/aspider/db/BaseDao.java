@@ -4,6 +4,8 @@ import java.util.List;
 
 public interface BaseDao<T> {
 
+    void createTable();
+
     void save(T entity);
 
     void delete(Long id);

@@ -8,43 +8,6 @@ import java.util.List;
 
 public class JianShuUser {
 
-    /**
-     * id : 1059531
-     * email : zhangshuyue@qq.com
-     * nickname : 张书乐
-     * slug : 891903dd4b3b
-     * avatar : http://upload.jianshu.io/users/upload_avatars/1059531/a887446e35b6.JPG
-     * background_image : null
-     * intro_compiled : TMT名博。人民网、人民邮电报专栏作者。出版有《实战网络营销》《越界：互联网+时代必先搞懂的大败局》等著作。
-     * homepage : http://www.weibo.com/zhangshuyue
-     * gender : 1
-     * city : null
-     * is_signed_author : false
-     * sns_nicknames : {"weibo":"张书乐"}
-     * public_snses : [{"id":287715,"name":"weibo","nickname":"张书乐","homepage":"http://weibo.com/u/1402093312","is_public":true},{"id":287716,"name":"wechat","nickname":"张书乐","homepage":"","is_public":true},{"id":399011,"name":"douban","nickname":"张书乐","homepage":"http://www.douban.com/people/78746822","is_public":true}]
-     * badges : [{"custom_info":null,"text":"简书游戏优秀作者","intro_url":"http://www.jianshu.com/p/d1d89ed69098","image_url":"http://upload.jianshu.io/user_badge/4c3e27d0-8aa4-4c52-b676-bb8697254f02","icon":9}]
-     * badges_count : 1
-     * is_following_user : false
-     * is_followed_by_user : false
-     * total_likes_received : 1337
-     * total_wordage : 953170
-     * subscriptions_count : 2
-     * followers_count : 6088
-     * notes_count : 531
-     * following_count : 19
-     * bookmarks_count : 2
-     * is_blocking_user : false
-     * notebooks_count : 1
-     * owned_collections_count : 4
-     * editable_collections_count : 4
-     * liked_notes_count : 3
-     * subscribing_notebooks_count : 0
-     * subscribing_collections_count : 2
-     * activities_count : 0
-     * work_exps : []
-     * educations : []
-     */
-
     private int id;
     private String email;
     private String nickname;
@@ -362,9 +325,6 @@ public class JianShuUser {
     }
 
     public static class SnsNicknamesBean {
-        /**
-         * weibo : 张书乐
-         */
 
         private String weibo;
 
@@ -378,13 +338,6 @@ public class JianShuUser {
     }
 
     public static class PublicSnsesBean {
-        /**
-         * id : 287715
-         * name : weibo
-         * nickname : 张书乐
-         * homepage : http://weibo.com/u/1402093312
-         * is_public : true
-         */
 
         private int id;
         private String name;
@@ -434,13 +387,6 @@ public class JianShuUser {
     }
 
     public static class BadgesBean {
-        /**
-         * custom_info : null
-         * text : 简书游戏优秀作者
-         * intro_url : http://www.jianshu.com/p/d1d89ed69098
-         * image_url : http://upload.jianshu.io/user_badge/4c3e27d0-8aa4-4c52-b676-bb8697254f02
-         * icon : 9
-         */
 
         private Object custom_info;
         private String text;

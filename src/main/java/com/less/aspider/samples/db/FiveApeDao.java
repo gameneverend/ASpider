@@ -15,6 +15,7 @@ public class FiveApeDao implements BaseDao<Ape> {
 
     private String tableName = getEntityClass().getSimpleName();
 
+    @Override
     public void createTable() {
         String sql = String.format("create table if not exists %s(id int primary key auto_increment, name varchar(100),album varchar(100), kbps varchar(20),size varchar(20),url varchar(100) not null unique,password varchar(30))", tableName);
         DBHelper.execSQL(sql);

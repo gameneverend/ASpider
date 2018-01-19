@@ -14,6 +14,7 @@ import java.util.List;
 public class JianshuDao implements BaseDao<JianShuUser> {
     private String tableName = getEntityClass().getSimpleName();
 
+    @Override
     public void createTable() {
         String sql = String.format("create table if not exists %s(id int primary key auto_increment, slug varchar(30) not null unique,nickname varchar(30), followers_count int,jsonText longtext)", tableName);
         DBHelper.execSQL(sql);

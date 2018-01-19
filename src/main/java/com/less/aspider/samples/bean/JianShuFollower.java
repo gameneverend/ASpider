@@ -6,20 +6,6 @@ package com.less.aspider.samples.bean;
 
 public class JianShuFollower {
 
-    /**
-     * id : 7963951
-     * email : 13699453387@163.com
-     * nickname : 静静的看你的样子
-     * gender : 0
-     * slug : 7ba2efbf1e66
-     * avatar : http://upload.jianshu.io/users/upload_avatars/7963951/8deb102a-1101-4f99-9449-006372964267
-     * intro_compiled :
-     * is_following_user : false
-     * is_followed_by_user : false
-     * total_likes_received : 0
-     * total_wordage : 0
-     */
-
     private int id;
     private String email;
     private String nickname;

@@ -3,29 +3,31 @@ package com.less.aspider.samples.bean;
 import java.util.List;
 
 /**
- * Created by deeper on 2018/1/18.
+ *
+ * @author deeper
+ * @date 2018/1/18
  */
 
 public class JianSpecial {
 
     /**
-     * id : 338074
-     * title : Bug区
-     * slug : c61326cbfe55
-     * description : 更多的是关于 属性  运行周期  导致的 界面 或者 内存泄露的问题
-     * image : http://upload.jianshu.io/collections/images/338074/%E5%9B%BE%E7%89%87.jpeg
+     * id : 4002
+     * title : @pple
+     * slug : ce308ee3af95
+     * description : 业余苹果，专业能力
+     * image : http://upload.jianshu.io/collections/images/4002/CollectionImage.jpg
      * tags : []
-     * owner : {"id":2445280,"nickname":"ArrQing","slug":"4a17553e7729","avatar":"http://upload.jianshu.io/users/upload_avatars/2445280/fe0b9aee2ece"}
+     * owner : {"id":155457,"nickname":"technewsyang","slug":"c5927e3a7c92","avatar":"http://cdn2.jianshu.io/assets/default_avatar/1-04bbeead395d74921af6a4e8214b4f61.jpg"}
      * coeditors : []
      * coeditors_count : 0
      * recommended_users_count : 0
      * is_current_user_editor : false
      * enable_subscription_push : false
      * is_subscribed : false
-     * notes_count : 7
-     * subscribers_count : 1
-     * can_contribute : false
-     * audit_contribute : false
+     * notes_count : 0
+     * subscribers_count : 2
+     * can_contribute : true
+     * audit_contribute : true
      * last_responded_at : 0
      * average_response_time : 0
      */
@@ -49,6 +51,7 @@ public class JianSpecial {
     private int average_response_time;
     private List<?> tags;
     private List<?> coeditors;
+    private String jsonText;
 
     public int getId() {
         return id;
@@ -204,10 +207,10 @@ public class JianSpecial {
 
     public static class OwnerBean {
         /**
-         * id : 2445280
-         * nickname : ArrQing
-         * slug : 4a17553e7729
-         * avatar : http://upload.jianshu.io/users/upload_avatars/2445280/fe0b9aee2ece
+         * id : 155457
+         * nickname : technewsyang
+         * slug : c5927e3a7c92
+         * avatar : http://cdn2.jianshu.io/assets/default_avatar/1-04bbeead395d74921af6a4e8214b4f61.jpg
          */
 
         private int id;
@@ -246,5 +249,13 @@ public class JianSpecial {
         public void setAvatar(String avatar) {
             this.avatar = avatar;
         }
+    }
+
+    public String getJsonText() {
+        return jsonText;
+    }
+
+    public void setJsonText(String jsonText) {
+        this.jsonText = jsonText;
     }
 }

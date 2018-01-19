@@ -109,13 +109,13 @@ public class ASpider implements Runnable {
         return this;
     }
 
-    public ASpider urlsHasReferer(String startUrl,String refererUrl) {
+    public ASpider urlsHasReferer(String startUrl, String refererUrl) {
         addRequest(new Request(startUrl,refererUrl));
         signalNewUrl();
         return this;
     }
 
-    public ASpider urlsHasReferer(String[] urls,String refererUrl) {
+    public ASpider urlsHasReferer(String[] urls, String refererUrl) {
         for (String url : urls) {
             addRequest(new Request(url,refererUrl));
         }

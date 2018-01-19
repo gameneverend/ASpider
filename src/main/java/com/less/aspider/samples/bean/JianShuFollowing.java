@@ -6,20 +6,6 @@ package com.less.aspider.samples.bean;
 
 public class JianShuFollowing {
 
-    /**
-     * id : 3678149
-     * email : lingyuze@jianshu.com
-     * nickname : 简宝玉
-     * gender : 0
-     * slug : b52ff888fd17
-     * avatar : http://upload.jianshu.io/users/upload_avatars/3678149/b8a58e70-1126-48c9-97e2-8f21a31dfa94.png
-     * intro_compiled : 我是简书家的宝玉~<br><br>在微信上搜索公众号“简宝玉”（jianshubaoyu），即可了解关于简书的一切事情。有问题，找宝玉！简宝玉同志会专程为您解疑答惑。<br><br>发送 拒稿/专题投稿，了解简书专题收稿相关规则~
-     * is_following_user : false
-     * is_followed_by_user : false
-     * total_likes_received : 10277
-     * total_wordage : 66889
-     */
-
     private int id;
     private String email;
     private String nickname;
