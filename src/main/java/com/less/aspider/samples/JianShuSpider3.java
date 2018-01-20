@@ -4,23 +4,28 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.less.aspider.ASpider;
 import com.less.aspider.bean.Page;
+import com.less.aspider.bean.Proxy;
 import com.less.aspider.bean.Request;
 import com.less.aspider.db.DBHelper;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
 import com.less.aspider.processor.PageProcessor;
+import com.less.aspider.proxy.ProxyProvider;
+import com.less.aspider.proxy.SimpleProxyProvider;
 import com.less.aspider.samples.bean.JianSpecial;
 import com.less.aspider.samples.bean.JianSubscriber;
 import com.less.aspider.samples.db.JianSpecialDao;
 import com.less.aspider.samples.db.JianSubscriberDao;
 import com.less.aspider.scheduler.BDBScheduler;
-import com.less.aspider.scheduler.PriorityScheduler;
+import com.less.aspider.util.XunProxyManager;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.less.aspider.util.XunProxyManager.createProxyAuthorization;
 
 /**
  * @author Administrator
@@ -35,23 +40,31 @@ public class JianShuSpider3 {
 
     private static String userBaseUrl = "https://api.jianshu.io/v2/collections/%d/subscribers?page=%d&count=%d";
 
-    private static Object queryCount = 50;
+    private static Object queryCount = 100;
 
     private static int specialTotalSize = 37950;
 
     public static void main(String[] args) {
         configDB();
+        String authHeader = createProxyAuthorization("ZF20181206870tBMzFp","5268960af3fb4b1cb572dda081e829f1");
 
         Downloader downloader = new HttpConnDownloader();
         // headers 设置(具有时效性)
         Map<String, String> headers = new HashMap<>();
+        headers.put(XunProxyManager.HEADER_PROXY_AUTH, authHeader);
         headers.put("Host", "s0.jianshuapi.com");
         headers.put("X-App-Name", "haruki");
         headers.put("X-App-Version", "3.2.0");
         headers.put("X-Device-Guid", "127051030369235");
-        headers.put("X-Timestamp", "1516372567");
-        headers.put("X-Auth-1", "21848817e3a3a33afe09c9bcae14a11e");
+        headers.put("X-Timestamp", "1516451801");
+        headers.put("X-Auth-1", "ded8779cabf014cdc4237e2d3dfdacc5");
         downloader.setHeaders(headers);
+
+        ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy(XunProxyManager.IP, XunProxyManager.PORT));
+        downloader.setProxyProvider(proxyProvider);
+
+        // SimpleEventBus.getInstance().registerDataSetObserver(proxyProvider);
+        // SimpleEventBus.getInstance().startWork("F:\\temp.txt", 60, true);
 
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
@@ -120,14 +133,13 @@ public class JianShuSpider3 {
                         }
                     }
                 })
-                .thread(2)
+                .thread(1)
                 .downloader(downloader)
-                .scheduler(new PriorityScheduler())
+                .scheduler(new BDBScheduler())
                 // 只有设置此项true: 错误的Page才会返回,否则默认重试-> 指定次数
                 .errorReturn(true)
-                .sleepTime(3000)
-                .retrySleepTime(1000)
-                .scheduler(new BDBScheduler())
+                .sleepTime(0)
+                .retrySleepTime(0)
                 .urls("https://api.jianshu.io/v2/collections/1")
                 .run();
     }

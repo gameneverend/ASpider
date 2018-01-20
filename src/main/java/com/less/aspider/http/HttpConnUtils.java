@@ -2,6 +2,7 @@ package com.less.aspider.http;
 
 import com.google.gson.JsonObject;
 import com.less.aspider.bean.Request;
+import com.less.aspider.util.HttpsUtils;
 import com.less.aspider.util.Singleton;
 
 import org.apache.commons.codec.binary.Base64;
@@ -18,6 +19,8 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by deeper on 2017/12/20.
@@ -36,6 +39,11 @@ public class HttpConnUtils {
         @Override
         protected HttpConnUtils create() {
             HttpConnUtils httpConnUtils = new HttpConnUtils();
+            // ignore
+            HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory();
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslParams.sSLSocketFactory);
+            HttpsURLConnection.setDefaultHostnameVerifier(HttpsUtils.UnSafeHostnameVerifier);
+
             return httpConnUtils;
         }
     };

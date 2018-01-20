@@ -26,7 +26,7 @@ public class XunProxyManager {
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -37,7 +37,7 @@ public class XunProxyManager {
     }
 
     private static void test() {
-        String url ="http://1212.ip138.com/ic.asp";
+        String url ="https://github.com/";
         try {
             byte[] bytes = HttpConnUtils.getDefault().sendRequestByProxy(url, XunProxyManager.IP, XunProxyManager.PORT);
             System.out.println(new String(bytes));

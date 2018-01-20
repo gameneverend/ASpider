@@ -2,6 +2,7 @@ package com.less.aspider.proxy;
 
 import com.less.aspider.bean.Page;
 import com.less.aspider.bean.Proxy;
+import com.less.aspider.util.L;
 
 import org.apache.commons.io.FileUtils;
 
@@ -129,8 +130,7 @@ public class SimpleProxyProvider implements ProxyProvider {
 
     @Override
     public void onChanged(Object param) {
-        System.out.println("onChanged: " + param);
-        System.out.println(proxies);
+        L.d("EventBus => onChanged");
         File file = (File) param;
         load(file);
         try {
