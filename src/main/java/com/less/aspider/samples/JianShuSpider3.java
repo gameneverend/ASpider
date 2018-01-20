@@ -13,6 +13,7 @@ import com.less.aspider.samples.bean.JianSpecial;
 import com.less.aspider.samples.bean.JianSubscriber;
 import com.less.aspider.samples.db.JianSpecialDao;
 import com.less.aspider.samples.db.JianSubscriberDao;
+import com.less.aspider.scheduler.BDBScheduler;
 import com.less.aspider.scheduler.PriorityScheduler;
 
 import java.lang.reflect.Type;
@@ -48,8 +49,8 @@ public class JianShuSpider3 {
         headers.put("X-App-Name", "haruki");
         headers.put("X-App-Version", "3.2.0");
         headers.put("X-Device-Guid", "127051030369235");
-        headers.put("X-Timestamp", "1516365606");
-        headers.put("X-Auth-1", "b996e3196ea4a75f325777e1f046fb65");
+        headers.put("X-Timestamp", "1516372567");
+        headers.put("X-Auth-1", "21848817e3a3a33afe09c9bcae14a11e");
         downloader.setHeaders(headers);
 
         ASpider.create()
@@ -126,6 +127,7 @@ public class JianShuSpider3 {
                 .errorReturn(true)
                 .sleepTime(3000)
                 .retrySleepTime(1000)
+                .scheduler(new BDBScheduler())
                 .urls("https://api.jianshu.io/v2/collections/1")
                 .run();
     }

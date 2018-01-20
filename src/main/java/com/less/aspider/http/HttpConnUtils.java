@@ -16,6 +16,7 @@ import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -68,6 +69,10 @@ public class HttpConnUtils {
 
         }
         return null;
+    }
+
+    public byte[] sendRequestByProxy(String url, String ip, int port) throws Exception {
+        return sendRequestByProxy(new Request(url), new com.less.aspider.bean.Proxy(ip,port));
     }
 
     public byte[] sendRequestByProxy(Request request, final com.less.aspider.bean.Proxy proxyBean) throws Exception {
@@ -156,5 +161,12 @@ public class HttpConnUtils {
             default:
                 break;
         }
+    }
+
+    public void addHeader(String key, String value) {
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
+        headers.put(key, value);
     }
 }
