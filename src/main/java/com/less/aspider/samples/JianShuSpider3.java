@@ -40,7 +40,7 @@ public class JianShuSpider3 {
 
     private static String userBaseUrl = "https://api.jianshu.io/v2/collections/%d/subscribers?page=%d&count=%d";
 
-    private static Object queryCount = 100;
+    private static Object queryCount = 50;
 
     private static int specialTotalSize = 37950;
 
@@ -56,8 +56,8 @@ public class JianShuSpider3 {
         headers.put("X-App-Name", "haruki");
         headers.put("X-App-Version", "3.2.0");
         headers.put("X-Device-Guid", "127051030369235");
-        headers.put("X-Timestamp", "1516451801");
-        headers.put("X-Auth-1", "ded8779cabf014cdc4237e2d3dfdacc5");
+        headers.put("X-Timestamp", "1516457698");
+        headers.put("X-Auth-1", "80c3678969f6ef48678e45b8ec8cb211");
         downloader.setHeaders(headers);
 
         ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy(XunProxyManager.IP, XunProxyManager.PORT));
@@ -78,7 +78,7 @@ public class JianShuSpider3 {
                             Integer collectionIndex = (Integer) lastRequest.getExtra("collectionIndex");
 
                             if (collectionIndex == null) {
-                                collectionIndex = 1;
+                                collectionIndex = 77;
                             }
 
                             // warn: if errorReturn = false 无须判断
@@ -95,7 +95,7 @@ public class JianShuSpider3 {
                             String nextUrl = String.format(collectionBaseUrl, nextCollectionIndex);
                             request1.setUrl(nextUrl);
                             request1.putExtra("collectionIndex", collectionIndex + 1);
-                            request1.setPriority(-1);
+                            request1.setPriority(1);
                             page.addTargetRequest(request1);
 
                             // 当前专题page下载成功才添加 <专题下的第一页记录,后续的自动判断>
@@ -104,7 +104,7 @@ public class JianShuSpider3 {
                                 request2.setUrl(String.format(userBaseUrl, collectionIndex, 1, queryCount));
                                 request2.putExtra("subscribersPage",1);
                                 request2.putExtra("collectionIndex",collectionIndex);
-                                request2.setPriority(1);
+                                request2.setPriority(-1);
                                 page.addTargetRequest(request2);
                             }
                         } else {
@@ -133,14 +133,14 @@ public class JianShuSpider3 {
                         }
                     }
                 })
-                .thread(1)
+                .thread(20)
                 .downloader(downloader)
                 .scheduler(new BDBScheduler())
                 // 只有设置此项true: 错误的Page才会返回,否则默认重试-> 指定次数
                 .errorReturn(true)
                 .sleepTime(0)
                 .retrySleepTime(0)
-                .urls("https://api.jianshu.io/v2/collections/1")
+                .urls("https://api.jianshu.io/v2/collections/77")
                 .run();
     }
 
