@@ -9,6 +9,7 @@ import com.less.aspider.bean.Request;
 import com.less.aspider.db.DBHelper;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
+import com.less.aspider.http.HttpConnUtils;
 import com.less.aspider.processor.PageProcessor;
 import com.less.aspider.proxy.ProxyProvider;
 import com.less.aspider.proxy.SimpleProxyProvider;
@@ -19,11 +20,18 @@ import com.less.aspider.samples.db.JianSubscriberDao;
 import com.less.aspider.scheduler.BDBScheduler;
 import com.less.aspider.util.XunProxyManager;
 
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+
+import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static com.less.aspider.util.XunProxyManager.createProxyAuthorization;
 
@@ -56,8 +64,8 @@ public class JianShuSpider3 {
         headers.put("X-App-Name", "haruki");
         headers.put("X-App-Version", "3.2.0");
         headers.put("X-Device-Guid", "127051030369235");
-        headers.put("X-Timestamp", "1516457698");
-        headers.put("X-Auth-1", "80c3678969f6ef48678e45b8ec8cb211");
+        headers.put("X-Timestamp", "xx");
+        headers.put("X-Auth-1", "xx");
         downloader.setHeaders(headers);
 
         ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy(XunProxyManager.IP, XunProxyManager.PORT));
@@ -65,6 +73,8 @@ public class JianShuSpider3 {
 
         // SimpleEventBus.getInstance().registerDataSetObserver(proxyProvider);
         // SimpleEventBus.getInstance().startWork("F:\\temp.txt", 60, true);
+
+        timerWork("F:\\jconfig.json", 30, true);
 
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
@@ -78,7 +88,7 @@ public class JianShuSpider3 {
                             Integer collectionIndex = (Integer) lastRequest.getExtra("collectionIndex");
 
                             if (collectionIndex == null) {
-                                collectionIndex = 77;
+                                collectionIndex = 227;
                             }
 
                             // warn: if errorReturn = false 无须判断
@@ -140,8 +150,39 @@ public class JianShuSpider3 {
                 .errorReturn(true)
                 .sleepTime(0)
                 .retrySleepTime(0)
-                .urls("https://api.jianshu.io/v2/collections/77")
+                .urls("https://api.jianshu.io/v2/collections/227")
                 .run();
+    }
+
+    public static class JHeader {
+        String timestamp;
+        String auth;
+    }
+
+    public static void timerWork(final String path, int period, boolean daemon) {
+        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
+                new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(daemon).build());
+        executorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                File file = new File(path);
+                if (file.exists()) {
+                    try {
+
+                        Gson gson = new Gson();
+                        JHeader jHeader = gson.fromJson(new FileReader(file), JHeader.class);
+                        HttpConnUtils.getDefault().addHeader("X-Auth-1", jHeader.auth);
+                        HttpConnUtils.getDefault().addHeader("X-Timestamp", jHeader.timestamp);
+
+                        System.out.println(HttpConnUtils.getDefault().getHeaders());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.err.println("temp proxy file not exsist!");
+                }
+            }
+        }, 0, period, TimeUnit.MINUTES);
     }
 
     private static void configDB() {

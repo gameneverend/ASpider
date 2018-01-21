@@ -177,4 +177,8 @@ public class HttpConnUtils {
         }
         headers.put(key, value);
     }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
 }
