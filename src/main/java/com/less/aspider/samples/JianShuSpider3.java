@@ -17,7 +17,7 @@ import com.less.aspider.samples.bean.JianSpecial;
 import com.less.aspider.samples.bean.JianSubscriber;
 import com.less.aspider.samples.db.JianSpecialDao;
 import com.less.aspider.samples.db.JianSubscriberDao;
-import com.less.aspider.scheduler.BDBScheduler;
+import com.less.aspider.scheduler.PriorityScheduler;
 import com.less.aspider.util.XunProxyManager;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -74,7 +74,7 @@ public class JianShuSpider3 {
         // SimpleEventBus.getInstance().registerDataSetObserver(proxyProvider);
         // SimpleEventBus.getInstance().startWork("F:\\temp.txt", 60, true);
 
-        timerWork("F:\\jconfig.json", 30, true);
+        timerWork("F:\\jconfig.json", 5, true);
 
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
@@ -88,7 +88,7 @@ public class JianShuSpider3 {
                             Integer collectionIndex = (Integer) lastRequest.getExtra("collectionIndex");
 
                             if (collectionIndex == null) {
-                                collectionIndex = 227;
+                                collectionIndex = 1410;
                             }
 
                             // warn: if errorReturn = false 无须判断
@@ -143,14 +143,14 @@ public class JianShuSpider3 {
                         }
                     }
                 })
-                .thread(20)
+                .thread(30)
                 .downloader(downloader)
-                .scheduler(new BDBScheduler())
+                .scheduler(new PriorityScheduler())
                 // 只有设置此项true: 错误的Page才会返回,否则默认重试-> 指定次数
                 .errorReturn(true)
                 .sleepTime(0)
                 .retrySleepTime(0)
-                .urls("https://api.jianshu.io/v2/collections/227")
+                .urls("https://api.jianshu.io/v2/collections/1410")
                 .run();
     }
 

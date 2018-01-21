@@ -17,7 +17,7 @@ public class JianShuUser {
     private String intro_compiled;
     private String homepage;
     private int gender;
-    private Object city;
+    private Object city = "";
     private boolean is_signed_author;
     private SnsNicknamesBean sns_nicknames;
     private int badges_count;
@@ -42,15 +42,6 @@ public class JianShuUser {
     private List<BadgesBean> badges;
     private List<?> work_exps;
     private List<?> educations;
-    private String jsonText;
-
-    public String getJsonText() {
-        return jsonText;
-    }
-
-    public void setJsonText(String jsonText) {
-        this.jsonText = jsonText;
-    }
 
     public int getId() {
         return id;
@@ -433,5 +424,18 @@ public class JianShuUser {
         public void setIcon(int icon) {
             this.icon = icon;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "user {" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", slug='https://www.jianshu.com/u/" + slug + '\'' +
+                ", gender=" + gender +
+                ", total_likes_received=" + total_likes_received +
+                ", followers_count=" + followers_count +
+                '}';
     }
 }

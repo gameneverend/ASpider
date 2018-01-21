@@ -9,6 +9,7 @@ import com.less.aspider.bean.Request;
 import com.less.aspider.db.DBHelper;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
+import com.less.aspider.http.HttpConnUtils;
 import com.less.aspider.pipeline.Pipeline;
 import com.less.aspider.processor.PageProcessor;
 import com.less.aspider.proxy.ProxyProvider;
@@ -17,41 +18,54 @@ import com.less.aspider.samples.bean.JianShuFollower;
 import com.less.aspider.samples.bean.JianShuFollowing;
 import com.less.aspider.samples.bean.JianShuUser;
 import com.less.aspider.samples.db.JianshuDao;
-import com.less.aspider.scheduler.PriorityScheduler;
+import com.less.aspider.scheduler.BDBScheduler;
+import com.less.aspider.util.XunProxyManager;
+
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import static com.less.aspider.util.XunProxyManager.createProxyAuthorization;
 
 /**
  * @author Administrator
  */
 public class JianShuSpider2 {
+
+    private static final int QUERY_COUNT = 1000;
+
     private static JianshuDao jianshuDao = new JianshuDao();
 
     public static void main(String args[]) {
-        // dao config
-        DBHelper.setType(DBHelper.TYPE_MYSQL);
-        DBHelper.setDBName("jianshu");
-        jianshuDao.createTable();
+        configDB();
 
-         // Proxy 代理设置
-        String path = System.getProperty("user.dir") + File.separator + "ASpidder" + File.separator + "src/main/java/proxy.txt";
-        ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy("113.209.100.170", 23128,"sy0bwptrqo","kb46o4cp0i"));
+        String authHeader = createProxyAuthorization("ZF20181206870tBMzFp","5268960af3fb4b1cb572dda081e829f1");
         Downloader downloader = new HttpConnDownloader();
-        // headers 设置(具有时效性)
+
         Map<String, String> headers = new HashMap<>();
+        headers.put(XunProxyManager.HEADER_PROXY_AUTH, authHeader);
+
         headers.put("Host", "s0.jianshuapi.com");
         headers.put("X-App-Name", "haruki");
         headers.put("X-App-Version", "3.2.0");
         headers.put("X-Device-Guid", "127051030369235");
-        headers.put("X-Timestamp", "1516000407");
-        headers.put("X-Auth-1", "beb8952985c1a75e7c7d6b341073c246");
+        headers.put("X-Timestamp", "xx");
+        headers.put("X-Auth-1", "xx");
         downloader.setHeaders(headers);
+
+        ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy(XunProxyManager.IP, XunProxyManager.PORT));
         downloader.setProxyProvider(proxyProvider);
+
+        timerWork("F:\\jconfig.json", 5, true);
 
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
@@ -67,11 +81,9 @@ public class JianShuSpider2 {
                             for (JianShuFollowing user : results) {
                                 // userId 非博客地址
                                 int userId = user.getId();
-                                String slug = user.getSlug();
                                 String homePage = "https://s0.jianshuapi.com/v2/users/" + userId;
-                                String blog = "https://www.jianshu.com/u/" + slug;
                                 // 优先抓取个人主页
-                                page.addTargetRequest(new Request(homePage,1));
+                                page.addTargetRequest(new Request(homePage,2));
                             }
                         } else if (url.contains("followers?app[name]=haruki")) {
                             // 粉丝列表
@@ -79,33 +91,30 @@ public class JianShuSpider2 {
                             List<JianShuFollower> results = gson.fromJson(page.getRawText(), type);
                             for (JianShuFollower follower : results) {
                                 int userId = follower.getId();
-                                String slug = follower.getSlug();
                                 String homePage = "https://s0.jianshuapi.com/v2/users/" + userId;
-                                String blog = "https://www.jianshu.com/u/" + slug;
                                 // 优先抓取个人主页
                                 page.addTargetRequest(new Request(homePage,1));
                             }
                         } else {
                             // user homePage
                             JianShuUser jianShuUser = gson.fromJson(page.getRawText(), JianShuUser.class);
-                            jianShuUser.setJsonText(page.getRawText());
                             page.putField("user", jianShuUser);
                             int followers_count = jianShuUser.getFollowers_count();
-                            if (followers_count > 0) {
+                            if (followers_count > -5) {
                                 int userId = jianShuUser.getId();
 
-                                String followerUrl = "https://s0.jianshuapi.com/v1/users/" + userId + "/followers?app[name]=haruki&app[version]=3.2.0&device[guid]=127051030369235&count=1000&page=1";
-                                page.addTargetRequest(new Request(followerUrl,-1));
-
-                                String followUrl = "https://s0.jianshuapi.com/v1/users/" + userId + "/following?app[name]=haruki&app[version]=3.2.0&device[guid]=127051030369235&count=1000&page=1";
+                                String followUrl = "https://s0.jianshuapi.com/v1/users/" + userId + "/following?app[name]=haruki&app[version]=3.2.0&device[guid]=127051030369235&count=" +QUERY_COUNT+ "&page=1";
                                 page.addTargetRequest(new Request(followUrl,-1));
+
+                                String followerUrl = "https://s0.jianshuapi.com/v1/users/" + userId + "/followers?app[name]=haruki&app[version]=3.2.0&device[guid]=127051030369235&count=" + QUERY_COUNT+ "&page=1";
+                                page.addTargetRequest(new Request(followerUrl,-2));
                             }
                         }
                     }
                 })
                 .thread(30)
                 .downloader(downloader)
-                .scheduler(new PriorityScheduler())
+                .scheduler(new BDBScheduler())
                 .sleepTime(0)
                 .retrySleepTime(0)
                 .addPipeline(new Pipeline() {
@@ -114,10 +123,49 @@ public class JianShuSpider2 {
                         for (Map.Entry<String, Object> entry : fields.entrySet()) {
                             JianShuUser jianShuUser = (JianShuUser) entry.getValue();
                             jianshuDao.save(jianShuUser);
+
+                            System.out.println(jianShuUser.toString());
                         }
                     }
                 })
-                .urls("https://s0.jianshuapi.com/v2/users/5c62892e3d47")
+                .urls("https://s0.jianshuapi.com/v2/users/5074347")
                 .run();
+    }
+
+    private static void configDB() {
+        DBHelper.setType(DBHelper.TYPE_MYSQL);
+        DBHelper.setDBName("jianshu_new");
+        jianshuDao.createTable();
+    }
+
+    public static class JHeader {
+        String timestamp;
+        String auth;
+    }
+
+    public static void timerWork(final String path, int period, boolean daemon) {
+        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
+                new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(daemon).build());
+        executorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                File file = new File(path);
+                if (file.exists()) {
+                    try {
+
+                        Gson gson = new Gson();
+                        JHeader jHeader = gson.fromJson(new FileReader(file), JHeader.class);
+                        HttpConnUtils.getDefault().addHeader("X-Auth-1", jHeader.auth);
+                        HttpConnUtils.getDefault().addHeader("X-Timestamp", jHeader.timestamp);
+
+                        System.out.println(HttpConnUtils.getDefault().getHeaders());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.err.println("temp proxy file not exsist!");
+                }
+            }
+        }, 0, period, TimeUnit.MINUTES);
     }
 }
