@@ -63,6 +63,7 @@ public class JianShuSpider2 {
         downloader.setHeaders(headers);
 
         ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy(XunProxyManager.IP, XunProxyManager.PORT));
+        proxyProvider.longLive();
         downloader.setProxyProvider(proxyProvider);
 
         timerWork("F:\\jconfig.json", 5, true);
@@ -128,7 +129,7 @@ public class JianShuSpider2 {
                         }
                     }
                 })
-                .urls("https://s0.jianshuapi.com/v2/users/5074347")
+                .urls("https://s0.jianshuapi.com/v2/users/1110734")
                 .run();
     }
 
@@ -152,7 +153,6 @@ public class JianShuSpider2 {
                 File file = new File(path);
                 if (file.exists()) {
                     try {
-
                         Gson gson = new Gson();
                         JHeader jHeader = gson.fromJson(new FileReader(file), JHeader.class);
                         HttpConnUtils.getDefault().addHeader("X-Auth-1", jHeader.auth);

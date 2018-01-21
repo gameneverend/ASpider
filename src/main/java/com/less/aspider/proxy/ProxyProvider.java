@@ -9,6 +9,8 @@ import com.less.aspider.eventbus.DataSetObserver;
  */
 
 public interface ProxyProvider extends DataSetObserver{
+
+    void longLive();
     /**
      * 从代理池获取一个代理
      * @return

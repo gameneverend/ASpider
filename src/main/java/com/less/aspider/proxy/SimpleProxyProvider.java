@@ -23,6 +23,7 @@ public class SimpleProxyProvider implements ProxyProvider {
 
     private List<Proxy> proxies;
     private AtomicInteger pointer;
+    private boolean loveLive = false;
 
     public SimpleProxyProvider(List<Proxy> proxies) {
         this(proxies, new AtomicInteger(-1));
@@ -91,6 +92,11 @@ public class SimpleProxyProvider implements ProxyProvider {
     }
 
     @Override
+    public void longLive() {
+        this.loveLive = true;
+    }
+
+    @Override
     public Proxy getProxy() {
         if (proxies.size() == 0) {
             return null;
@@ -103,7 +109,7 @@ public class SimpleProxyProvider implements ProxyProvider {
         if (!page.isDownloadSuccess()) {
             synchronized (SimpleProxyProvider.class) {
                 int errorTiems = proxy.getErrorTimes();
-                if (errorTiems > 10) {
+                if (errorTiems > 5 && !loveLive) {
                     proxies.remove(proxy);
                 } else {
                     proxy.setErrorTimes(errorTiems + 1);
