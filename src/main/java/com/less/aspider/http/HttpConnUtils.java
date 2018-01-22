@@ -52,31 +52,24 @@ public class HttpConnUtils {
         this.headers = headers;
     }
 
-    public byte[] sendRequest(Request request){
-        try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(request.getUrl()).openConnection();
-            connection.setInstanceFollowRedirects(true);
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
-            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-            appendHeaders(request,connection);
+    public byte[] sendRequest(Request request) throws Exception{
+        HttpURLConnection connection = (HttpURLConnection) new URL(request.getUrl()).openConnection();
+        connection.setInstanceFollowRedirects(true);
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
+        connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+        appendHeaders(request,connection);
 
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestMethod(request.getMethod());
-            connection.setConnectTimeout(1000 * 30);
-            connection.setReadTimeout(1000 * 30);
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        connection.setRequestMethod(request.getMethod());
+        connection.setConnectTimeout(1000 * 5);
+        connection.setReadTimeout(1000 * 5);
 
-            if (request.getMethod().equals(Request.METHOD_POST)) {
-                sendPostParameters(request,connection);
-            }
-            byte[] datas = readInputStream(connection.getInputStream());
-            return datas;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-
+        if (request.getMethod().equals(Request.METHOD_POST)) {
+            sendPostParameters(request,connection);
         }
-        return null;
+        byte[] datas = readInputStream(connection.getInputStream());
+        return datas;
     }
 
     public byte[] sendRequestByProxy(String url, String ip, int port) throws Exception {

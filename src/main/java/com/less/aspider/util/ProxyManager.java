@@ -43,7 +43,7 @@ public class ProxyManager {
 		ports.add(8010);
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws Exception {
 		// http://ttvp.daxiangip.com/ip/?tid=558659427668804&num=100&operator=2&protocol=http
 		// http://ttvp.daxiangip.com/ip/?tid=558659427668804&num=100&operator=2&protocol=http&foreign=only
 		String url = "http://www.xicidaili.com/";
@@ -51,7 +51,7 @@ public class ProxyManager {
 		manager.start(url);
 	}
 
-	public void start(String url) {
+	public void start(String url) throws Exception {
 		this.url = url;
 		String html = downloadPage();
 		parsePage(html);
@@ -73,7 +73,7 @@ public class ProxyManager {
 		}
 	}
 
-	private String downloadPage() {
+	private String downloadPage() throws Exception {
 		byte[] datas = HttpConnUtils.getDefault().sendRequest(new Request(url));
 		String html = new String(datas);
 		return html;

@@ -123,6 +123,14 @@ public class ASpider implements Runnable {
         return this;
     }
 
+    public ASpider urls(List<String> urls) {
+        for (String url : urls) {
+            addRequest(new Request(url));
+        }
+        signalNewUrl();
+        return this;
+    }
+
     public ASpider urls(String... urls) {
         for (String url : urls) {
             addRequest(new Request(url));
@@ -187,6 +195,7 @@ public class ASpider implements Runnable {
             }
         }
         stat.set(STAT_STOPPED);
+        System.out.println("============== spider finished ==============");
         // release some resources
         CloseUtils.closeQuietly(scheduler);
     }
@@ -284,6 +293,10 @@ public class ASpider implements Runnable {
         }
     }
 
+    /**
+     * 注意: spider调用的一些方法必须在run方法之前执行,否则因为CountableThreadPool阻塞主线程的原因导致run后面的方法执行不到,或者使用runAsync运行spider.
+     * @return
+     */
     public int getThreadAlive() {
         if (threadPool == null) {
             return 0;

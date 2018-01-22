@@ -40,10 +40,15 @@ public class HttpConnDownloader implements Downloader {
             try {
                 bytes = HttpConnUtils.getDefault().sendRequestByProxy(request,proxyBean);
             } catch (Exception ignore) {
+                ignore.printStackTrace();
             }
         } else {
             L.d("=====> Request Nomal: " + request.getUrl() + " <=====");
-            bytes = HttpConnUtils.getDefault().sendRequest(request);
+            try {
+                bytes = HttpConnUtils.getDefault().sendRequest(request);
+            } catch (Exception ignore) {
+                ignore.printStackTrace();
+            }
         }
         page.setUrl(request.getUrl());
         page.setRefererUrl(request.getRefererUrl());

@@ -15,7 +15,7 @@ public class ProxyProviderTest {
 
     public static void main(String[] args) {
         // testEventBus();
-        testTimerWork();
+        // testTimerWork();
     }
 
     private static void testTimerWork() {

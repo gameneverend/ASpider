@@ -9,8 +9,8 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -21,16 +21,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleProxyProvider implements ProxyProvider {
 
-    private List<Proxy> proxies;
+    private List<Proxy> proxies = new CopyOnWriteArrayList<>();
+    private List<Proxy> errorProxies = new CopyOnWriteArrayList<>();
+    private int maxErrorTimes = 10;
     private AtomicInteger pointer;
     private boolean loveLive = false;
+
+    public SimpleProxyProvider() {
+        pointer = new AtomicInteger(-1);
+    }
+
+    public SimpleProxyProvider maxErrorTimes(int maxErrorTimes) {
+        this.maxErrorTimes = maxErrorTimes;
+        return this;
+    }
 
     public SimpleProxyProvider(List<Proxy> proxies) {
         this(proxies, new AtomicInteger(-1));
     }
 
     private SimpleProxyProvider(List<Proxy> proxies, AtomicInteger pointer) {
-        this.proxies = proxies;
+        this.proxies.addAll(proxies);
         this.pointer = pointer;
     }
 
@@ -79,21 +90,22 @@ public class SimpleProxyProvider implements ProxyProvider {
         for (Proxy proxy : proxies) {
             proxiesTemp.add(proxy);
         }
-        return new SimpleProxyProvider(Collections.synchronizedList(proxiesTemp));
+        return new SimpleProxyProvider(proxiesTemp);
     }
 
     public synchronized void load(File file) {
         List<Proxy> proxies = readFile(file);
         for (Proxy proxy : proxies) {
-            if (!this.proxies.contains(proxy)) {
+            if (!this.proxies.contains(proxy) && !errorProxies.contains(proxy)) {
                 this.proxies.add(proxy);
             }
         }
     }
 
     @Override
-    public void longLive() {
+    public ProxyProvider longLive() {
         this.loveLive = true;
+        return this;
     }
 
     @Override
@@ -108,14 +120,20 @@ public class SimpleProxyProvider implements ProxyProvider {
     public void returnProxy(Proxy proxy, Page page) {
         if (!page.isDownloadSuccess()) {
             synchronized (SimpleProxyProvider.class) {
-                int errorTiems = proxy.getErrorTimes();
-                if (errorTiems > 5 && !loveLive) {
+                int errorTimes = proxy.getErrorTimes();
+                if (errorTimes > maxErrorTimes && !loveLive) {
+                    errorProxies.add(proxy);
                     proxies.remove(proxy);
                 } else {
-                    proxy.setErrorTimes(errorTiems + 1);
+                    proxy.setErrorTimes(errorTimes + 1);
                 }
             }
         }
+    }
+
+    @Override
+    public int length() {
+        return proxies.size();
     }
 
     private int loop() {
@@ -136,15 +154,9 @@ public class SimpleProxyProvider implements ProxyProvider {
 
     @Override
     public void onChanged(Object param) {
-        L.d("EventBus => onChanged");
+        L.d("EventBus => onChanged" + " proxies: " + proxies.size() + " errorProxies: " + errorProxies.size());
         File file = (File) param;
         load(file);
-        try {
-            // 清空代理文本,
-            FileUtils.writeStringToFile(file,"","UTF-8");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

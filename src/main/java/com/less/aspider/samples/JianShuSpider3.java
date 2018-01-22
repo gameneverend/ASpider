@@ -76,6 +76,7 @@ public class JianShuSpider3 {
 
         timerWork("F:\\jconfig.json", 5, true);
 
+        // 由于每个请求的添加都依赖于上一个请求,所以运行速度看起来像单线程.
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
                     @Override
@@ -179,7 +180,7 @@ public class JianShuSpider3 {
                         e.printStackTrace();
                     }
                 } else {
-                    System.err.println("temp proxy file not exsist!");
+                    System.err.println("headers file not exsist!");
                 }
             }
         }, 0, period, TimeUnit.MINUTES);

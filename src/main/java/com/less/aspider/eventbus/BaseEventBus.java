@@ -21,4 +21,6 @@ public abstract class BaseEventBus {
     }
 
     public abstract void startWork(String path,int period, boolean daemon);
+
+    public abstract void startAPI(String api, String path, int period, boolean daemon);
 }
