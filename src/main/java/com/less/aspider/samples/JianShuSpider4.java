@@ -3,7 +3,6 @@ package com.less.aspider.samples;
 import com.google.gson.Gson;
 import com.less.aspider.ASpider;
 import com.less.aspider.bean.Page;
-import com.less.aspider.db.DBHelper;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
 import com.less.aspider.eventbus.SimpleEventBus;
@@ -14,7 +13,7 @@ import com.less.aspider.proxy.ProxyProvider;
 import com.less.aspider.proxy.SimpleProxyProvider;
 import com.less.aspider.samples.bean.JianShuUser;
 import com.less.aspider.samples.db.JianshuDao;
-import com.less.aspider.scheduler.QueueScheduler;
+import com.less.aspider.scheduler.BDBScheduler;
 import com.less.aspider.scheduler.Scheduler;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -36,17 +35,15 @@ public class JianShuSpider4 {
 
     private static final String BASE_URL = "https://s0.jianshuapi.com/v2/users/%d";
 
-    private static int startIndex = 37089;
+    private static int startIndex = 1055547;
 
-    private static int endIndex = 100020;
+    private static int endIndex = 2000000;
 
     private static JianshuDao jianshuDao = new JianshuDao();
 
-    private static Scheduler bdbScheduler = new QueueScheduler();
+    private static Scheduler bdbScheduler = new BDBScheduler();
 
     public static void main(String args[]) {
-        configDB();
-
         Downloader downloader = new HttpConnDownloader();
 
         Map<String, String> headers = new HashMap<>();
@@ -62,7 +59,7 @@ public class JianShuSpider4 {
         downloader.setProxyProvider(proxyProvider);
 
         SimpleEventBus.getInstance().registerDataSetObserver(proxyProvider);
-        SimpleEventBus.getInstance().startWork("F:\\temp.txt", 30, true);
+        SimpleEventBus.getInstance().startWork("F:\\temp.txt", 3600, true);
 
         timerWork("F:\\jconfig.json", 5, true);
 
@@ -81,7 +78,7 @@ public class JianShuSpider4 {
                         page.putField("user", user);
                     }
                 })
-                .thread(30)
+                .thread(100)
                 .downloader(downloader)
                 .scheduler(bdbScheduler)
                 .sleepTime(0)
@@ -97,12 +94,6 @@ public class JianShuSpider4 {
                 })
                 .urls(urls)
                 .run();
-    }
-
-    private static void configDB() {
-        DBHelper.setType(DBHelper.TYPE_MYSQL);
-        DBHelper.setDBName("jianshu_new");
-        jianshuDao.createTable();
     }
 
     public static class JHeader {

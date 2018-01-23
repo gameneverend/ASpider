@@ -9,6 +9,10 @@ dependencies {
     compile group: 'us.codecraft', name: 'xsoup', version: '0.3.1'
     // SimpleEventBus use org.apache.commons.lang3.concurrent.BasicThreadFactory
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+    // cp30 改善连接池
+    compile group: 'com.mchange', name: 'c3p0', version: '0.9.5.2'
+    // dbutils
+    compile group: 'commons-dbutils', name: 'commons-dbutils', version: '1.7'
 }
 
 sourceCompatibility = "1.7"

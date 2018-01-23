@@ -196,6 +196,7 @@ public class ASpider implements Runnable {
         }
         stat.set(STAT_STOPPED);
         System.out.println("============== spider finished ==============");
+        threadPool.shutdown();
         // release some resources
         CloseUtils.closeQuietly(scheduler);
     }
