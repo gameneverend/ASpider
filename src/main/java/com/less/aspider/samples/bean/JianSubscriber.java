@@ -6,13 +6,6 @@ package com.less.aspider.samples.bean;
 
 public class JianSubscriber {
 
-    /**
-     * id : 2169674
-     * slug : 0efc3e6b4e89
-     * nickname : BugScorpion
-     * avatar : http://cdn2.jianshu.io/assets/default_avatar/4-3397163ecdb3855a0a4139c34a695885.jpg
-     */
-
     private int id;
     private String slug;
     private String nickname;

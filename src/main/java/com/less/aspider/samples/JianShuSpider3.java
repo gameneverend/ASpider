@@ -48,24 +48,18 @@ public class JianShuSpider3 {
 
     private static String userBaseUrl = "https://api.jianshu.io/v2/collections/%d/subscribers?page=%d&count=%d";
 
-    private static Object queryCount = 50;
+    private static Object queryCount = 20;
 
-    private static int specialTotalSize = 37950;
+    private static int specialTotalSize = 1000;
 
     public static void main(String[] args) {
         configDB();
-        String authHeader = createProxyAuthorization("ZF20181206870tBMzFp","5268960af3fb4b1cb572dda081e829f1");
+        String authHeader = createProxyAuthorization("xx","xx");
 
         Downloader downloader = new HttpConnDownloader();
         // headers 设置(具有时效性)
         Map<String, String> headers = new HashMap<>();
         headers.put(XunProxyManager.HEADER_PROXY_AUTH, authHeader);
-        headers.put("Host", "s0.jianshuapi.com");
-        headers.put("X-App-Name", "haruki");
-        headers.put("X-App-Version", "3.2.0");
-        headers.put("X-Device-Guid", "127051030369235");
-        headers.put("X-Timestamp", "xx");
-        headers.put("X-Auth-1", "xx");
         downloader.setHeaders(headers);
 
         ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy(XunProxyManager.IP, XunProxyManager.PORT));
@@ -89,7 +83,7 @@ public class JianShuSpider3 {
                             Integer collectionIndex = (Integer) lastRequest.getExtra("collectionIndex");
 
                             if (collectionIndex == null) {
-                                collectionIndex = 1410;
+                                collectionIndex = 1;
                             }
 
                             // warn: if errorReturn = false 无须判断
@@ -144,14 +138,14 @@ public class JianShuSpider3 {
                         }
                     }
                 })
-                .thread(30)
+                .thread(3)
                 .downloader(downloader)
                 .scheduler(new PriorityScheduler())
                 // 只有设置此项true: 错误的Page才会返回,否则默认重试-> 指定次数
                 .errorReturn(true)
                 .sleepTime(0)
                 .retrySleepTime(0)
-                .urls("https://api.jianshu.io/v2/collections/1410")
+                .urls("https://api.jianshu.io/v2/collections/1")
                 .run();
     }
 

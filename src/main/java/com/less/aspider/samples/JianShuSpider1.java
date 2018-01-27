@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * @author Administrator
  */
-public class JianShuSpider {
+public class JianShuSpider1 {
     public static final String BASE_URL = "https://www.jianshu.com";
     public static void main(String args[]) {
         final String userRegex = "https://www\\.jianshu\\.com/u/[a-zA-Z0-9]*";

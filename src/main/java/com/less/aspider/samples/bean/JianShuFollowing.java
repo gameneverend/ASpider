@@ -7,7 +7,6 @@ package com.less.aspider.samples.bean;
 public class JianShuFollowing {
 
     private int id;
-    private String email;
     private String nickname;
     private int gender;
     private String slug;
@@ -24,14 +23,6 @@ public class JianShuFollowing {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getNickname() {

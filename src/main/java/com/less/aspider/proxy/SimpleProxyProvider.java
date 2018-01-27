@@ -154,9 +154,9 @@ public class SimpleProxyProvider implements ProxyProvider {
 
     @Override
     public void onChanged(Object param) {
-        L.d("EventBus => onChanged" + " proxies: " + proxies.size() + " errorProxies: " + errorProxies.size());
         File file = (File) param;
         load(file);
+        L.d("EventBus => onChanged" + " proxies: " + proxies.size() + " errorProxies: " + errorProxies.size());
     }
 
     @Override

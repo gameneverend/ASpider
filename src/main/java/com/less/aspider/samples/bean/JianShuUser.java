@@ -9,7 +9,6 @@ import java.util.List;
 public class JianShuUser {
 
     private int id;
-    private String email;
     private String nickname;
     private String slug;
     private String avatar;
@@ -49,14 +48,6 @@ public class JianShuUser {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getNickname() {
@@ -430,7 +421,6 @@ public class JianShuUser {
     public String toString() {
         return "user {" +
                 "id=" + id +
-                ", email='" + email + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", slug='https://www.jianshu.com/u/" + slug + '\'' +
                 ", gender=" + gender +

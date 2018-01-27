@@ -10,28 +10,6 @@ import java.util.List;
 
 public class JianSpecial {
 
-    /**
-     * id : 4002
-     * title : @pple
-     * slug : ce308ee3af95
-     * description : 业余苹果，专业能力
-     * image : http://upload.jianshu.io/collections/images/4002/CollectionImage.jpg
-     * tags : []
-     * owner : {"id":155457,"nickname":"technewsyang","slug":"c5927e3a7c92","avatar":"http://cdn2.jianshu.io/assets/default_avatar/1-04bbeead395d74921af6a4e8214b4f61.jpg"}
-     * coeditors : []
-     * coeditors_count : 0
-     * recommended_users_count : 0
-     * is_current_user_editor : false
-     * enable_subscription_push : false
-     * is_subscribed : false
-     * notes_count : 0
-     * subscribers_count : 2
-     * can_contribute : true
-     * audit_contribute : true
-     * last_responded_at : 0
-     * average_response_time : 0
-     */
-
     private int id;
     private String title;
     private String slug;
@@ -206,12 +184,6 @@ public class JianSpecial {
     }
 
     public static class OwnerBean {
-        /**
-         * id : 155457
-         * nickname : technewsyang
-         * slug : c5927e3a7c92
-         * avatar : http://cdn2.jianshu.io/assets/default_avatar/1-04bbeead395d74921af6a4e8214b4f61.jpg
-         */
 
         private int id;
         private String nickname;

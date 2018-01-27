@@ -1,8 +1,12 @@
 package com.less.aspider.samples.db;
 
 import com.less.aspider.dao.SimpleDao;
-import com.less.aspider.db.DBHelper;
 import com.less.aspider.samples.bean.JianSpecial;
+import com.less.aspider.util.JdbcUtils;
+
+import org.apache.commons.dbutils.QueryRunner;
+
+import java.sql.SQLException;
 
 /**
  * Created by deeper on 2018/1/19.
@@ -10,11 +14,27 @@ import com.less.aspider.samples.bean.JianSpecial;
 
 public class JianSpecialDao extends SimpleDao<JianSpecial> {
 
+    private QueryRunner queryRunner = JdbcUtils.getQueryRunner("jian_special_new");
+
+    @Override
+    public void createTable() {
+        try {
+            String sql = generateTableSQL();
+            queryRunner.update(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public synchronized void save(JianSpecial entity) {
         String[] params = new String[]{entity.getId() + "", entity.getTitle(), entity.getSlug(),entity.getDescription(), entity.getImage(), entity.getTags().toString(), entity.getNotes_count() + "", entity.getSubscribers_count() + "", entity.getOwner().getSlug(), entity.getJsonText()};
         String sql = String.format("insert into %s(specialId, title, slug, description, image, tags, notes_count, subscribers_count, owner_slug, jsonText) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName);
-        DBHelper.execSQL(sql, params);
+        try {
+            queryRunner.update(sql,params);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

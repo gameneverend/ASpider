@@ -3,9 +3,9 @@ package com.less.aspider.samples;
 import com.google.gson.Gson;
 import com.less.aspider.ASpider;
 import com.less.aspider.bean.Page;
+import com.less.aspider.bean.Proxy;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
-import com.less.aspider.eventbus.SimpleEventBus;
 import com.less.aspider.http.HttpConnUtils;
 import com.less.aspider.pipeline.Pipeline;
 import com.less.aspider.processor.PageProcessor;
@@ -34,32 +34,23 @@ import java.util.concurrent.TimeUnit;
 public class JianShuSpider4 {
 
     private static final String BASE_URL = "https://s0.jianshuapi.com/v2/users/%d";
+    // 2125000 - 4000000
+    private static int startIndex = 4790000;
 
-    private static int startIndex = 1055547;
-
-    private static int endIndex = 2000000;
+    private static int endIndex = 4890000;
 
     private static JianshuDao jianshuDao = new JianshuDao();
 
     private static Scheduler bdbScheduler = new BDBScheduler();
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         Downloader downloader = new HttpConnDownloader();
 
         Map<String, String> headers = new HashMap<>();
-        headers.put("Host", "s0.jianshuapi.com");
-        headers.put("X-App-Name", "haruki");
-        headers.put("X-App-Version", "3.2.0");
-        headers.put("X-Device-Guid", "127051030369235");
-        headers.put("X-Timestamp", "xx");
-        headers.put("X-Auth-1", "xx");
         downloader.setHeaders(headers);
 
-        ProxyProvider proxyProvider = new SimpleProxyProvider().longLive();
+        ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy("xx",80,"xx","xx")).longLive();
         downloader.setProxyProvider(proxyProvider);
-
-        SimpleEventBus.getInstance().registerDataSetObserver(proxyProvider);
-        SimpleEventBus.getInstance().startWork("F:\\temp.txt", 3600, true);
 
         timerWork("F:\\jconfig.json", 5, true);
 
@@ -78,7 +69,7 @@ public class JianShuSpider4 {
                         page.putField("user", user);
                     }
                 })
-                .thread(100)
+                .thread(5)
                 .downloader(downloader)
                 .scheduler(bdbScheduler)
                 .sleepTime(0)
@@ -114,8 +105,6 @@ public class JianShuSpider4 {
                         JHeader jHeader = gson.fromJson(new FileReader(file), JHeader.class);
                         HttpConnUtils.getDefault().addHeader("X-Auth-1", jHeader.auth);
                         HttpConnUtils.getDefault().addHeader("X-Timestamp", jHeader.timestamp);
-
-                        System.out.println(HttpConnUtils.getDefault().getHeaders());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

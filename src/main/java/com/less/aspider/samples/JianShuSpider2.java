@@ -41,25 +41,18 @@ import static com.less.aspider.util.XunProxyManager.createProxyAuthorization;
  */
 public class JianShuSpider2 {
 
-    private static final int QUERY_COUNT = 1000;
+    private static final int QUERY_COUNT = 50;
 
     private static JianshuDao jianshuDao = new JianshuDao();
 
     public static void main(String args[]) {
         configDB();
 
-        String authHeader = createProxyAuthorization("ZF20181206870tBMzFp","5268960af3fb4b1cb572dda081e829f1");
+        String authHeader = createProxyAuthorization("xx","xx");
         Downloader downloader = new HttpConnDownloader();
 
         Map<String, String> headers = new HashMap<>();
         headers.put(XunProxyManager.HEADER_PROXY_AUTH, authHeader);
-
-        headers.put("Host", "s0.jianshuapi.com");
-        headers.put("X-App-Name", "haruki");
-        headers.put("X-App-Version", "3.2.0");
-        headers.put("X-Device-Guid", "127051030369235");
-        headers.put("X-Timestamp", "xx");
-        headers.put("X-Auth-1", "xx");
         downloader.setHeaders(headers);
 
         ProxyProvider proxyProvider = SimpleProxyProvider.from(new Proxy(XunProxyManager.IP, XunProxyManager.PORT));
