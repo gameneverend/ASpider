@@ -60,12 +60,12 @@ public class HttpConnUtils {
         appendHeaders(request,connection);
 
         connection.setDoInput(true);
-        connection.setDoOutput(true);
         connection.setRequestMethod(request.getMethod());
         connection.setConnectTimeout(1000 * 5);
         connection.setReadTimeout(1000 * 5);
 
         if (request.getMethod().equals(Request.METHOD_POST)) {
+            connection.setDoOutput(true);
             sendPostParameters(request,connection);
         }
         byte[] datas = readInputStream(connection.getInputStream());
@@ -98,13 +98,13 @@ public class HttpConnUtils {
         connection.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
         appendHeaders(request,connection);
 
-        connection.setDoInput(true);
         connection.setDoOutput(true);
         connection.setRequestMethod(request.getMethod());
         connection.setConnectTimeout(1000 * 30);
         connection.setReadTimeout(1000 * 30);
 
         if (request.getMethod().equals(Request.METHOD_POST)) {
+            connection.setDoInput(true);
             sendPostParameters(request,connection);
         }
 

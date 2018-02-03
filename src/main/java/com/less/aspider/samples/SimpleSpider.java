@@ -26,7 +26,7 @@ public class SimpleSpider {
                         }
                     }
                 })
-                .thread(3)
+                .thread(2)
                 .sleepTime(0)
                 .retrySleepTime(0)
                 .urls(startUrl)
