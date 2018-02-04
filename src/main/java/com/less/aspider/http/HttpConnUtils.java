@@ -98,13 +98,13 @@ public class HttpConnUtils {
         connection.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
         appendHeaders(request,connection);
 
-        connection.setDoOutput(true);
+        connection.setDoInput(true);
         connection.setRequestMethod(request.getMethod());
         connection.setConnectTimeout(1000 * 30);
         connection.setReadTimeout(1000 * 30);
 
         if (request.getMethod().equals(Request.METHOD_POST)) {
-            connection.setDoInput(true);
+            connection.setDoOutput(true);
             sendPostParameters(request,connection);
         }
 
