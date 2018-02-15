@@ -13,6 +13,11 @@ dependencies {
     compile group: 'com.mchange', name: 'c3p0', version: '0.9.5.2'
     // dbutils
     compile group: 'commons-dbutils', name: 'commons-dbutils', version: '1.7'
+    // email sender
+    compile group: 'org.apache.commons', name: 'commons-email', version: '1.5'
+    // reflect
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
+
 }
 
 sourceCompatibility = "1.7"

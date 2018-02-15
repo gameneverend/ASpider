@@ -10,7 +10,7 @@ import java.sql.SQLException;
  * Created by deeper on 2018/1/23.
  */
 
-public class TestDao {
+public class DaoTest {
 
     QueryRunner qr = JdbcUtils.getQueryRunner("test_c3p0");
 
@@ -26,11 +26,11 @@ public class TestDao {
     }
 
     public static void main(String[] args) throws SQLException {
-        TestDao testDao = new TestDao();
-        testDao.createTable();
+        DaoTest daoTest = new DaoTest();
+        daoTest.createTable();
         long begin = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
-            testDao.add(new Person("name " + i, "age " + i));
+            daoTest.add(new Person("name " + i, "age " + i));
         }
         long end = System.currentTimeMillis();
         System.out.println("耗时: " + (end - begin));
