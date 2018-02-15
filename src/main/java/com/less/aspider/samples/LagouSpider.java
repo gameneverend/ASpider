@@ -17,7 +17,6 @@ import java.util.List;
 
 public class LagouSpider {
 
-
     private static int pageCount = 350;
 
     public static void main(String args[]) {

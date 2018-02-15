@@ -1,6 +1,6 @@
 package com.less.aspider.samples.db;
 
-import com.less.aspider.dao.SimpleDao;
+import com.less.aspider.db.BaseDao;
 import com.less.aspider.samples.bean.Lagou;
 import com.less.aspider.util.JdbcUtils;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by deeper on 2018/2/6.
  */
 
-public class LagouDao extends SimpleDao<Lagou> {
+public class LagouDao extends BaseDao.SimpleDao<Lagou> {
 
     private QueryRunner queryRunner = JdbcUtils.getQueryRunner("lagou");
 

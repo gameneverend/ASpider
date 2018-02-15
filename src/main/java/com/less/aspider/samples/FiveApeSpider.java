@@ -4,7 +4,6 @@ import com.less.aspider.ASpider;
 import com.less.aspider.bean.Page;
 import com.less.aspider.bean.Proxy;
 import com.less.aspider.bean.Request;
-import com.less.aspider.db.DBHelper;
 import com.less.aspider.downloader.Downloader;
 import com.less.aspider.downloader.HttpConnDownloader;
 import com.less.aspider.pipeline.Pipeline;
@@ -30,13 +29,12 @@ import java.util.Map;
  * @author Administrator
  */
 public class FiveApeSpider {
+
     private static FiveApeDao fiveApeDao = new FiveApeDao();
+
     private static final String regex = "http://www.51ape.com/ape/(\\d+)\\.html";
 
     public static void main(String args[]) {
-        // dao config
-        DBHelper.setType(DBHelper.TYPE_MYSQL);
-        DBHelper.setDBName("51ape_new");
         fiveApeDao.createTable();
 
         // Proxy 代理设置
@@ -50,7 +48,7 @@ public class FiveApeSpider {
         headers.put("User-Agent", "Mozilla/5.0 (compatible; Baiduspider-render/2.0; +http://www.baidu.com/search/spider.html)");
 
         downloader.setHeaders(headers);
-        downloader.setProxyProvider(proxyProvider);
+        // downloader.setProxyProvider(proxyProvider);
 
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
@@ -72,7 +70,7 @@ public class FiveApeSpider {
                             page.putField("ape",ape);
                         }
 
-                        Document doc = Jsoup.parse(page.getRawText());
+                        Document doc = Jsoup.parse(page.getRawText(), "http://www.51ape.com");
                         Elements elements = doc.select("a");
                         for (Element e : elements) {
                             String href = e.attr("abs:href");
@@ -80,7 +78,7 @@ public class FiveApeSpider {
                         }
                     }
                 })
-                .thread(30)
+                .thread(100)
                 .downloader(downloader)
                 .scheduler(new PriorityScheduler())
                 .sleepTime(0)
