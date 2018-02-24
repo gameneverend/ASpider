@@ -3,7 +3,7 @@ package com.less.aspider.test;
 import com.less.aspider.dao.Column;
 import com.less.aspider.dao.Table;
 
-@Table("user")
+@Table
 public class Person {
 
 	@Column(value = "person_id", columnDefinition = "int primary key auto_increment")
@@ -12,6 +12,10 @@ public class Person {
 	private String name;
 	@Column
 	private String age;
+
+	public Person(){
+
+	}
 
 	public Person(String name, String age) {
 		this.name = name;
