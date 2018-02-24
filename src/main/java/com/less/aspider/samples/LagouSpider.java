@@ -18,17 +18,15 @@ import java.util.List;
 public class LagouSpider {
 
     private static int pageCount = 350;
+    private static String baseUrl = "https://m.lagou.com/search.json?city=%s&positionName=%s&pageNo=%d&pageSize=15";
 
     public static void main(String args[]) {
         final LagouDao lagouDao = new LagouDao();
         lagouDao.createTable();
 
-        String baseUrl = "xx";
-        List<String> urls = new ArrayList<>();
-        for (int i = 1; i <= pageCount; i++) {
-            String url = String.format(baseUrl, "全国", "C++", i);
-            urls.add(url);
-        }
+        List<String> urls = createUrls("Java", "Android", "C", "Python", "爬虫", "ios", "前端", "php", "数据挖掘", "node.js", "C#", "go", "全栈", "移动");
+
+        System.out.println(urls);
         ASpider.create()
                 .pageProcessor(new PageProcessor() {
                     @Override
@@ -55,4 +53,14 @@ public class LagouSpider {
                 .run();
     }
 
+    private static List<String> createUrls(String... names) {
+        List<String> urls = new ArrayList<>();
+        for (String name : names) {
+            for (int i = 1; i <= pageCount; i++) {
+                String url = String.format(baseUrl, "全国", name, i);
+                urls.add(url);
+            }
+        }
+        return urls;
+    }
 }
