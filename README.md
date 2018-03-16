@@ -30,7 +30,7 @@ public class SimpleSpider {
                     @Override
                     public void process(Page page) {
 						// 输出项(默认ConsolePipeline输出到终端)
-                        page.putField("html", page.getRawText());
+						page.putField("html", page.getRawText());
 						// 匹配网页链接
 						String newUrl = RegexUtils.get(REGEX_URL).selectSingle(html, 0);
 						// 添加新链接到队列
