@@ -2,6 +2,7 @@ package com.less.aspider.samples;
 
 import com.less.aspider.ASpider;
 import com.less.aspider.bean.Page;
+import com.less.aspider.bean.Request;
 import com.less.aspider.dao.DatabaseHelper;
 import com.less.aspider.downloader.HttpConnDownloader;
 import com.less.aspider.processor.PageProcessor;
@@ -46,11 +47,20 @@ public class JavaPdfSpider extends DatabaseHelper {
                     public void process(Page page) {
                         try {
                             String html = page.getRawText();
-                            Document doc = Jsoup.
+                            Document doc = Jsoup.parse(html, "http://www.java1234.com");
                             Elements elements = doc.select("a");
                             for (Element e : elements) {
                                 String href = e.attr("abs:href");
-                                System.out.println(href);
+                                if("" != href.trim() && href.startsWith("http://www.java1234.com")){
+                                    Request request = new Request();
+                                    request.setUrl(href);
+                                    if (href.endsWith(".html")) {
+                                        request.setPriority(1);
+                                    } else {
+                                        request.setPriority(-1);
+                                    }
+                                    page.addTargetRequest(request);
+                                }
                             }
 
                             String panUrl = RegexUtils.get(regex1).selectSingle(html, 0);

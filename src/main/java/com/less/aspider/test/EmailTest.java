@@ -30,9 +30,9 @@ public class EmailTest {
         email.setHostName("smtp.163.com");
         email.setSmtpPort(25);
         // 用户名和密码为邮箱的账号和密码（不需要进行base64编码）
-        email.setAuthenticator(new DefaultAuthenticator("hc59yv", "paiyon"));
+        email.setAuthenticator(new DefaultAuthenticator("xx", "xx"));
         email.setSSLOnConnect(true);
-        email.setFrom("hc59yv@163.com","简书");
+        email.setFrom("xx@163.com","xxx");
         email.setSubject("有人@您一下！");
         email.setTextMsg("Your email client does not support HTML messages");
         email.setHtmlMsg(html);
